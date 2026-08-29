@@ -1,6 +1,6 @@
 import type { Route } from "next";
 
-export const ADMIN_PAGE_SIZE = 5;
+export const ADMIN_PAGE_SIZE = 10;
 
 export function paginate<T>(items: T[], pageParam: unknown, pageSize: number) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
