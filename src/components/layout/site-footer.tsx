@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import CmsLink from "@/components/layout/cms-link";
 import CopyrightYear from "@/components/layout/copyright-year";
 import FindUsMap from "@/components/contact/find-us-map";
@@ -79,7 +80,11 @@ export default function SiteFooter({ footerContent }: { footerContent: FooterCon
 
         <div className="mt-12 flex flex-col gap-2 border-t border-slate-800 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © <CopyrightYear /> {footerContent.brandName} —{" "}
+            ©{" "}
+            <Suspense fallback="2026">
+              <CopyrightYear />
+            </Suspense>{" "}
+            {footerContent.brandName} —{" "}
             <a
               href="https://mrsolo.vercel.app/"
               target="_blank"
