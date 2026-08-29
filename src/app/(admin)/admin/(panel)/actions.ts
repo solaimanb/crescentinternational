@@ -12,8 +12,14 @@ import { uploadMediaFile } from "@/lib/storage";
 import {
   categoryFormSchema,
   productFormSchema,
-  settingFormSchema,
+  siteSettingsFormSchema,
 } from "@/lib/forms/schemas";
+import {
+  contactContentSchema,
+  footerContentSchema,
+  homeContentSchema,
+  pageContentSchema,
+} from "@/lib/content/schema";
 
 export type ActionState = { error: string } | null;
 
@@ -236,30 +242,126 @@ export async function deleteCategoryAction(
   redirect("/admin/categories" as Route);
 }
 
-export async function saveSettingAction(
+function lines(value: string) {
+  return value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function optionLines(value: string) {
+  return lines(value).map((line) => {
+    const separator = line.indexOf("|");
+    if (separator === -1) {
+      return { label: line, value: line };
+    }
+
+    return {
+      label: line.slice(0, separator).trim(),
+      value: line.slice(separator + 1).trim(),
+    };
+  });
+}
+
+async function upsertSetting(id: string, data: Record<string, unknown>, body = "") {
+  const [existing] = await db.select().from(siteSetting).where(eq(siteSetting.id, id)).limit(1);
+  if (existing) {
+    await db.update(siteSetting).set({ data, body }).where(eq(siteSetting.id, id));
+    return;
+  }
+
+  await db.insert(siteSetting).values({ id, data, body });
+}
+
+export async function saveSiteSettingsAction(
   _previous: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   await requireAdmin();
 
-  const parsed = settingFormSchema.safeParse({
-    id: field(formData, "id"),
-    data: field(formData, "data"),
-    body: field(formData, "body"),
-  });
+  const raw: Record<string, string> = {};
+  for (const key of Object.keys(siteSettingsFormSchema.shape)) {
+    raw[key] = field(formData, key);
+  }
+
+  const parsed = siteSettingsFormSchema.safeParse(raw);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid settings." };
   }
 
-  const data = JSON.parse(parsed.data.data) as Record<string, unknown>;
-  const { id, body } = parsed.data;
-
-  const [existing] = await db.select().from(siteSetting).where(eq(siteSetting.id, id)).limit(1);
-  if (existing) {
-    await db.update(siteSetting).set({ data, body }).where(eq(siteSetting.id, id));
-  } else {
-    await db.insert(siteSetting).values({ id, data, body });
+  const values = parsed.data;
+  const wheelProductsPerCategory = Number(values.wheelProductsPerCategory);
+  if (!Number.isFinite(wheelProductsPerCategory) || wheelProductsPerCategory < 0) {
+    return { error: "Featured count must be a number." };
   }
+
+  const home = homeContentSchema.safeParse({
+    bannerTitle: values.bannerTitle,
+    bannerSubtitle: values.bannerSubtitle,
+    bannerImage: values.bannerImage,
+    bannerImageAlt: values.bannerImageAlt,
+    logoImage: values.logoImage,
+    logoImageAlt: values.logoImageAlt,
+    wheelTitle: values.wheelTitle,
+    wheelCtaLabel: values.wheelCtaLabel,
+    wheelCtaHref: values.wheelCtaHref,
+    wheelProductsPerCategory,
+  });
+  const contact = contactContentSchema.safeParse({
+    title: values.contactTitle,
+    intro: values.contactIntro,
+    phoneLabel: values.contactPhoneLabel,
+    phoneValue: values.contactPhoneValue,
+    emailLabel: values.contactEmailLabel,
+    emailValue: values.contactEmailValue,
+    purchaseSectionTitle: values.purchaseSectionTitle,
+    whatsappButtonLabel: values.whatsappButtonLabel,
+    emailButtonLabel: values.emailButtonLabel,
+    phoneButtonLabel: values.phoneButtonLabel,
+    tempButtonLabel: values.tempButtonLabel,
+    whatsappPopupTitle: values.whatsappPopupTitle,
+    emailPopupTitle: values.emailPopupTitle,
+    phonePopupTitle: values.phonePopupTitle,
+    defaultWhatsappHref: values.defaultWhatsappHref,
+    defaultTempHref: values.defaultTempHref,
+    whatsappOptions: optionLines(values.whatsappOptions),
+    phoneOptions: optionLines(values.phoneOptions),
+    emailOptions: optionLines(values.emailOptions),
+  });
+  const footer = footerContentSchema.safeParse({
+    brandName: values.brandName,
+    description: values.brandDescription,
+    homeButtonLabel: values.homeButtonLabel,
+    homeButtonHref: values.homeButtonHref,
+    categoriesButtonLabel: values.categoriesButtonLabel,
+    categoriesButtonHref: values.categoriesButtonHref,
+    contactButtonLabel: values.contactButtonLabel,
+    contactButtonHref: values.contactButtonHref,
+    aboutButtonLabel: values.aboutButtonLabel,
+    aboutButtonHref: values.aboutButtonHref,
+    findUsLabel: values.findUsLabel,
+    mapPlaceLabel: values.mapPlaceLabel,
+    mapUrl: values.mapUrl,
+    phoneLabel: values.footerPhoneLabel,
+    phones: lines(values.phones),
+    emailLabel: values.footerEmailLabel,
+    emails: lines(values.emails),
+    addressLabel: "Address",
+    addressValue: values.address,
+    footerNote: values.footerNote,
+  });
+  const about = pageContentSchema.safeParse({ title: values.aboutTitle });
+  const terms = pageContentSchema.safeParse({ title: values.termsTitle });
+
+  if (!home.success || !contact.success || !footer.success || !about.success || !terms.success) {
+    return { error: "Settings could not be saved." };
+  }
+
+  await upsertSetting("home", home.data);
+  await upsertSetting("contact", contact.data);
+  await upsertSetting("footer", footer.data);
+  await upsertSetting("about", about.data, values.aboutBody);
+  await upsertSetting("terms", terms.data, values.termsBody);
 
   updateTag("catalog");
   revalidatePath("/", "layout");

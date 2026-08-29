@@ -29,20 +29,62 @@ export const productFormSchema = z.object({
   images: z.array(z.string()),
 });
 
-export const settingFormSchema = z.object({
-  id: z.string().min(1),
-  data: z.string().refine((value) => {
-    try {
-      const parsed: unknown = JSON.parse(value);
-      return Boolean(parsed) && typeof parsed === "object" && !Array.isArray(parsed);
-    } catch {
-      return false;
-    }
-  }, "Settings must be a JSON object."),
-  body: z.string(),
+export const siteSettingsFormSchema = z.object({
+  brandName: z.string().min(1, "Brand name is required."),
+  brandDescription: z.string(),
+  address: z.string(),
+  phones: z.string(),
+  emails: z.string(),
+  mapUrl: z.string(),
+  mapPlaceLabel: z.string(),
+  findUsLabel: z.string(),
+  footerNote: z.string(),
+  homeButtonLabel: z.string(),
+  homeButtonHref: z.string(),
+  categoriesButtonLabel: z.string(),
+  categoriesButtonHref: z.string(),
+  contactButtonLabel: z.string(),
+  contactButtonHref: z.string(),
+  aboutButtonLabel: z.string(),
+  aboutButtonHref: z.string(),
+  footerPhoneLabel: z.string(),
+  footerEmailLabel: z.string(),
+  bannerTitle: z.string(),
+  bannerSubtitle: z.string(),
+  bannerImage: z.string(),
+  bannerImageAlt: z.string(),
+  logoImage: z.string(),
+  logoImageAlt: z.string(),
+  wheelTitle: z.string(),
+  wheelCtaLabel: z.string(),
+  wheelCtaHref: z.string(),
+  wheelProductsPerCategory: z.string().min(1, "Featured count is required."),
+  contactTitle: z.string(),
+  contactIntro: z.string(),
+  contactPhoneLabel: z.string(),
+  contactPhoneValue: z.string(),
+  contactEmailLabel: z.string(),
+  contactEmailValue: z.string(),
+  purchaseSectionTitle: z.string(),
+  whatsappButtonLabel: z.string(),
+  emailButtonLabel: z.string(),
+  phoneButtonLabel: z.string(),
+  tempButtonLabel: z.string(),
+  whatsappPopupTitle: z.string(),
+  emailPopupTitle: z.string(),
+  phonePopupTitle: z.string(),
+  defaultWhatsappHref: z.string(),
+  defaultTempHref: z.string(),
+  whatsappOptions: z.string(),
+  phoneOptions: z.string(),
+  emailOptions: z.string(),
+  aboutTitle: z.string(),
+  aboutBody: z.string(),
+  termsTitle: z.string(),
+  termsBody: z.string(),
 });
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 export type ProductFormValues = z.infer<typeof productFormSchema>;
-export type SettingFormValues = z.infer<typeof settingFormSchema>;
+export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
