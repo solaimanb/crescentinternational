@@ -1,5 +1,5 @@
 import CmsLink from "@/components/layout/cms-link";
-import FindUsMapLink from "@/components/contact/find-us-map-link";
+import FindUsMap from "@/components/contact/find-us-map";
 import type { FooterContent } from "@/lib/content/types";
 
 function phoneToHref(phone: string): string {
@@ -38,12 +38,11 @@ export default function SiteFooter({ footerContent }: { footerContent: FooterCon
             <p id="site-footer-find-us" className="text-xs font-bold uppercase tracking-wide text-slate-300">
               {footerContent.findUsLabel}
             </p>
-            <FindUsMapLink
-              href={footerContent.mapUrl}
-              className="mt-2 inline-flex rounded-xs border border-cyan-400 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
-            >
-              {footerContent.mapPlaceLabel}
-            </FindUsMapLink>
+            <FindUsMap
+              mapUrl={footerContent.mapUrl}
+              placeLabel={footerContent.mapPlaceLabel}
+              address={footerContent.addressValue}
+            />
 
             <div className="mt-4 space-y-3">
               <div>
