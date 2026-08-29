@@ -6,7 +6,6 @@ import ProductCard from "@/components/catalog/product-card";
 import ProductWheel from "@/components/catalog/product-wheel";
 import CmsLink from "@/components/layout/cms-link";
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getCategoryGroups, getWheelProducts } from "@/lib/catalog/groups";
 import { getCategoryContent, getHomeBanners, getHomeContent } from "@/lib/content/site";
@@ -52,24 +51,18 @@ export default async function HomePage() {
       ) : null}
 
       {homeContent ? (
-        <Card className="mt-10">
-          <CardHeader className="border-b">
-            <CardTitle>
-              <h2 className="font-heading text-base font-medium leading-snug">{homeContent.wheelTitle}</h2>
-            </CardTitle>
-            <CardAction>
-              <Button nativeButton={false} variant="link" render={<CmsLink href={homeContent.wheelCtaHref} />}>
-                {homeContent.wheelCtaLabel}
-              </Button>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <ProductWheel products={wheelProducts} />
-          </CardContent>
-        </Card>
+        <section className="mt-10">
+          <div className="mb-5 flex items-end justify-between gap-3">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{homeContent.wheelTitle}</h2>
+            <Button nativeButton={false} variant="link" render={<CmsLink href={homeContent.wheelCtaHref} />}>
+              {homeContent.wheelCtaLabel}
+            </Button>
+          </div>
+          <ProductWheel products={wheelProducts} />
+        </section>
       ) : null}
 
-      <section className="mt-12 space-y-10">
+      <div className="mt-12 space-y-12">
         {categoryGroups.map((group) => {
           const categorySettings = categorySettingsBySlug.get(group.slug);
           if (!categorySettings) {
@@ -78,44 +71,30 @@ export default async function HomePage() {
 
           return (
             <section key={group.slug} id={`category-${group.slug}`} className="scroll-mt-32">
-              <Card className="rounded-xs">
-                <CardHeader className="border-b">
-                  <CardTitle>
-                    <h2 className="font-heading text-base font-medium leading-snug">{group.name}</h2>
-                  </CardTitle>
-                  <CardAction>
-                    <Button
-                      nativeButton={false}
-                      variant="link"
-                      render={<Link href={`/all-products?category=${group.slug}` as Route} />}
-                    >
-                      See all
-                    </Button>
-                  </CardAction>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  {categorySettings.description ? (
-                    <p className="mb-5 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
-                      {categorySettings.description}
-                    </p>
-                  ) : null}
-
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-                    {group.products.slice(0, categorySettings.homepageDesktopCount).map((product, index) => (
-                      <div
-                        key={product.slug}
-                        className={index >= categorySettings.homepageMobileCount ? "hidden md:block" : "block"}
-                      >
-                        <ProductCard product={product} />
-                      </div>
-                    ))}
+              <div className="mb-5 flex items-end justify-between gap-3">
+                <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{group.name}</h2>
+                <Button
+                  nativeButton={false}
+                  variant="link"
+                  render={<Link href={`/all-products?category=${group.slug}` as Route} />}
+                >
+                  See all
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                {group.products.slice(0, categorySettings.homepageDesktopCount).map((product, index) => (
+                  <div
+                    key={product.slug}
+                    className={index >= categorySettings.homepageMobileCount ? "hidden md:block" : "block"}
+                  >
+                    <ProductCard product={product} />
                   </div>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
             </section>
           );
         })}
-      </section>
+      </div>
     </div>
   );
 }
