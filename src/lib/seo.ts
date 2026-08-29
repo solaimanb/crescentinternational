@@ -26,8 +26,11 @@ export async function brandMetadata(): Promise<{ brand: string; description: str
   };
 }
 
-export function catalogHref(category = "", page = 1) {
-  return pageHref("/all-products", page, category ? { category } : {});
+export function catalogHref(category = "", page = 1, extra: Record<string, string> = {}) {
+  return pageHref("/all-products", page, {
+    ...(category ? { category } : {}),
+    ...extra,
+  });
 }
 
 export function openGraphImage(url: string, alt: string): NonNullable<Metadata["openGraph"]>["images"] {
