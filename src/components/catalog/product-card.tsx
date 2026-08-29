@@ -35,8 +35,8 @@ export default function ProductCard({ product }: { product: Product }) {
       whileFocus="hover"
       variants={productCardVariants}
     >
-      <Card className="h-full gap-0 py-0 shadow-none ring-foreground/8">
-        <AspectRatio ratio={1} className="overflow-hidden bg-muted">
+      <Card className="h-full gap-0 overflow-hidden rounded-xs py-0 shadow-none ring-foreground/8">
+        <AspectRatio ratio={1} className="overflow-hidden rounded-t-xs bg-muted">
           {image ? (
             <motion.div className="absolute inset-0" variants={productImageVariants}>
               <Image
@@ -59,7 +59,7 @@ export default function ProductCard({ product }: { product: Product }) {
           {model ? (
             <p className="font-mono text-[11px] font-medium tracking-wide text-muted-foreground">{model}</p>
           ) : null}
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug tracking-tight md:text-[15px]">{title}</h3>
+          <h3 className="line-clamp-2 text-base font-bold leading-snug tracking-tight md:text-lg">{title}</h3>
           <p className="mt-auto pt-1 text-sm font-semibold tabular-nums tracking-tight">{product.priceRange}</p>
         </CardContent>
       </Card>
