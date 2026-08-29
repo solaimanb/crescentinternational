@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyContent, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getHomeBanners } from "@/lib/content/site";
+import { AdminDeleteButton } from "@/app/(admin)/admin/_components/admin-delete-button";
+import { deleteBannerAction } from "@/app/(admin)/admin/(panel)/actions";
 
 const BANNER_RATIO = 21 / 8;
 
@@ -44,7 +46,7 @@ export default async function AdminBannersPage() {
                   <TableHead>Image</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Order</TableHead>
-                  <TableHead className="text-right">Edit</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -66,14 +68,23 @@ export default async function AdminBannersPage() {
                     <TableCell>{banner.title}</TableCell>
                     <TableCell>{banner.sortOrder}</TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        nativeButton={false}
-                        size="sm"
-                        variant="outline"
-                        render={<Link href={`/admin/banners/${banner.id}` as Route} />}
-                      >
-                        Edit
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          nativeButton={false}
+                          size="sm"
+                          variant="outline"
+                          render={<Link href={`/admin/banners/${banner.id}` as Route} />}
+                        >
+                          Edit
+                        </Button>
+                        <AdminDeleteButton
+                          action={deleteBannerAction}
+                          fieldName="id"
+                          fieldValue={banner.id}
+                          title={`Delete ${banner.title}?`}
+                          description="This removes the banner from the homepage."
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

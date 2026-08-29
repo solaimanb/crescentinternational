@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllCategories } from "@/lib/catalog/categories";
+import { AdminDeleteButton } from "@/app/(admin)/admin/_components/admin-delete-button";
+import { deleteCategoryAction } from "@/app/(admin)/admin/(panel)/actions";
 
 export default async function AdminCategoriesPage() {
   const categories = await getAllCategories();
@@ -27,7 +29,7 @@ export default async function AdminCategoriesPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
                 <TableHead>Order</TableHead>
-                <TableHead className="text-right">Edit</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -37,14 +39,23 @@ export default async function AdminCategoriesPage() {
                   <TableCell>{item.slug}</TableCell>
                   <TableCell>{item.order}</TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      nativeButton={false}
-                      size="sm"
-                      variant="outline"
-                      render={<Link href={`/admin/categories/${item.slug}` as Route} />}
-                    >
-                      Edit
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        nativeButton={false}
+                        size="sm"
+                        variant="outline"
+                        render={<Link href={`/admin/categories/${item.slug}` as Route} />}
+                      >
+                        Edit
+                      </Button>
+                      <AdminDeleteButton
+                        action={deleteCategoryAction}
+                        fieldName="slug"
+                        fieldValue={item.slug}
+                        title={`Delete ${item.name}?`}
+                        description="This removes the category from the catalogue."
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllProducts } from "@/lib/catalog/products";
+import { AdminDeleteButton } from "@/app/(admin)/admin/_components/admin-delete-button";
+import { deleteProductAction } from "@/app/(admin)/admin/(panel)/actions";
 
 export default async function AdminProductsPage() {
   const products = await getAllProducts();
@@ -27,7 +29,7 @@ export default async function AdminProductsPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead className="text-right">Edit</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -37,14 +39,23 @@ export default async function AdminProductsPage() {
                   <TableCell>{item.category}</TableCell>
                   <TableCell>{item.priceRange}</TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      nativeButton={false}
-                      size="sm"
-                      variant="outline"
-                      render={<Link href={`/admin/products/${item.slug}` as Route} />}
-                    >
-                      Edit
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        nativeButton={false}
+                        size="sm"
+                        variant="outline"
+                        render={<Link href={`/admin/products/${item.slug}` as Route} />}
+                      >
+                        Edit
+                      </Button>
+                      <AdminDeleteButton
+                        action={deleteProductAction}
+                        fieldName="slug"
+                        fieldValue={item.slug}
+                        title={`Delete ${item.name}?`}
+                        description="This removes the product from the catalogue."
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

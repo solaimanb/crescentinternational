@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import type { Route } from "next";
+import { useTransition } from "react";
 import { usePathname } from "next/navigation";
 import { Factory, Images, LayoutDashboard, Layers, LogOut, Package, Settings } from "lucide-react";
+import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -69,6 +71,7 @@ function NavGroup({
 
 export function AdminSidebar({ email }: { email: string }) {
   const pathname = usePathname();
+  const [signOutPending, startSignOut] = useTransition();
 
   return (
     <Sidebar collapsible="icon">
@@ -88,12 +91,23 @@ export function AdminSidebar({ email }: { email: string }) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <form action={signOutAction}>
-              <SidebarMenuButton type="submit" tooltip="Sign out">
-                <LogOut />
-                <span className="truncate">{email}</span>
-              </SidebarMenuButton>
-            </form>
+            <ConfirmAlertDialog
+              trigger={
+                <SidebarMenuButton type="button" tooltip="Sign out">
+                  <LogOut />
+                  <span className="truncate">{email}</span>
+                </SidebarMenuButton>
+              }
+              title="Sign out?"
+              description="You will need to sign in again to open the admin panel."
+              confirmLabel="Sign out"
+              pending={signOutPending}
+              onConfirm={() => {
+                startSignOut(() => {
+                  void signOutAction();
+                });
+              }}
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

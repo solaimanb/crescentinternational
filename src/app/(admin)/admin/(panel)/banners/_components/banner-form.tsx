@@ -4,6 +4,7 @@ import Image from "next/image";
 import { startTransition, useActionState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -30,7 +31,7 @@ function bannerFormData(values: BannerFormValues, file: File | undefined) {
 export function BannerForm({ banner }: { banner?: HomeBanner }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useActionState(saveBannerAction, null as ActionState);
-  const [deleteState, deleteAction] = useActionState(deleteBannerAction, null as ActionState);
+  const [deleteState, deleteAction, deletePending] = useActionState(deleteBannerAction, null as ActionState);
   const form = useForm<BannerFormValues>({
     resolver: zodResolver(bannerFormSchema),
     defaultValues: {
@@ -78,21 +79,27 @@ export function BannerForm({ banner }: { banner?: HomeBanner }) {
       </form>
 
       {banner ? (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            const data = new FormData();
-            data.set("id", banner.id);
-            startTransition(() => {
-              deleteAction(data);
-            });
-          }}
-        >
+        <div className="space-y-2">
           {deleteState?.error ? <FieldError>{deleteState.error}</FieldError> : null}
-          <Button type="submit" variant="destructive">
-            Delete
-          </Button>
-        </form>
+          <ConfirmAlertDialog
+            trigger={
+              <Button type="button" variant="destructive">
+                Delete
+              </Button>
+            }
+            title={`Delete ${banner.title}?`}
+            description="This removes the banner from the homepage."
+            confirmLabel="Delete"
+            pending={deletePending}
+            onConfirm={() => {
+              const data = new FormData();
+              data.set("id", banner.id);
+              startTransition(() => {
+                deleteAction(data);
+              });
+            }}
+          />
+        </div>
       ) : null}
     </div>
   );

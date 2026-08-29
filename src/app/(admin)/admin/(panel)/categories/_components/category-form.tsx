@@ -3,6 +3,7 @@
 import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { FieldError, FieldGroup } from "@/components/ui/field";
 import { FormInput, FormTextarea } from "../../../_components/rhf-fields";
@@ -20,7 +21,7 @@ function categoryFormData(values: CategoryFormValues) {
 
 export function CategoryForm({ category }: { category?: CategorySettings }) {
   const [state, formAction] = useActionState(saveCategoryAction, null as ActionState);
-  const [deleteState, deleteAction] = useActionState(deleteCategoryAction, null as ActionState);
+  const [deleteState, deleteAction, deletePending] = useActionState(deleteCategoryAction, null as ActionState);
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
@@ -59,21 +60,27 @@ export function CategoryForm({ category }: { category?: CategorySettings }) {
       </form>
 
       {category ? (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            const data = new FormData();
-            data.set("slug", category.slug);
-            startTransition(() => {
-              deleteAction(data);
-            });
-          }}
-        >
+        <div className="space-y-2">
           {deleteState?.error ? <FieldError>{deleteState.error}</FieldError> : null}
-          <Button type="submit" variant="destructive">
-            Delete
-          </Button>
-        </form>
+          <ConfirmAlertDialog
+            trigger={
+              <Button type="button" variant="destructive">
+                Delete
+              </Button>
+            }
+            title={`Delete ${category.name}?`}
+            description="This removes the category from the catalogue."
+            confirmLabel="Delete"
+            pending={deletePending}
+            onConfirm={() => {
+              const data = new FormData();
+              data.set("slug", category.slug);
+              startTransition(() => {
+                deleteAction(data);
+              });
+            }}
+          />
+        </div>
       ) : null}
     </div>
   );

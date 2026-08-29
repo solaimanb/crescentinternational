@@ -3,6 +3,7 @@
 import { startTransition, useActionState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,7 @@ export function ProductForm({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useActionState(saveProductAction, null as ActionState);
-  const [deleteState, deleteAction] = useActionState(deleteProductAction, null as ActionState);
+  const [deleteState, deleteAction, deletePending] = useActionState(deleteProductAction, null as ActionState);
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -120,23 +121,26 @@ export function ProductForm({
             <Input id="newImages" ref={fileRef} type="file" accept="image/*" multiple />
             <div className="mt-2 space-y-2">
               {images.map((src) => (
-                <label key={src} className="flex items-center justify-between gap-2 rounded-lg border px-2 py-1 text-xs">
+                <div key={src} className="flex items-center justify-between gap-2 rounded-lg border px-2 py-1 text-xs">
                   <span className="truncate">{src}</span>
-                  <Button
-                    type="button"
-                    size="xs"
-                    variant="ghost"
-                    onClick={() =>
+                  <ConfirmAlertDialog
+                    trigger={
+                      <Button type="button" size="xs" variant="ghost">
+                        Remove
+                      </Button>
+                    }
+                    title="Remove this image?"
+                    description="It is dropped from this product when you save."
+                    confirmLabel="Remove"
+                    onConfirm={() =>
                       form.setValue(
                         "images",
                         images.filter((item) => item !== src),
                         { shouldDirty: true, shouldValidate: true },
                       )
                     }
-                  >
-                    Remove
-                  </Button>
-                </label>
+                  />
+                </div>
               ))}
             </div>
           </Field>
@@ -151,21 +155,27 @@ export function ProductForm({
       </form>
 
       {product ? (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            const data = new FormData();
-            data.set("slug", product.slug);
-            startTransition(() => {
-              deleteAction(data);
-            });
-          }}
-        >
+        <div className="space-y-2">
           {deleteState?.error ? <FieldError>{deleteState.error}</FieldError> : null}
-          <Button type="submit" variant="destructive">
-            Delete
-          </Button>
-        </form>
+          <ConfirmAlertDialog
+            trigger={
+              <Button type="button" variant="destructive">
+                Delete
+              </Button>
+            }
+            title={`Delete ${product.name}?`}
+            description="This removes the product from the catalogue."
+            confirmLabel="Delete"
+            pending={deletePending}
+            onConfirm={() => {
+              const data = new FormData();
+              data.set("slug", product.slug);
+              startTransition(() => {
+                deleteAction(data);
+              });
+            }}
+          />
+        </div>
       ) : null}
     </div>
   );
