@@ -163,6 +163,7 @@ export default function ProductContactActions({
       {activeConfig ? (
         <div
           className="fixed inset-0 z-[70] flex items-center justify-center bg-transparent px-4 backdrop-blur-[70px]"
+          data-lenis-prevent
           onClick={(event) => {
             if (event.target === event.currentTarget) {
               setActiveModal("");

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import TopNav from "@/components/layout/top-nav";
 import SiteFooter from "@/components/layout/site-footer";
 import CatalogPage from "@/components/catalog/catalog-page";
+import CatalogLenis from "@/components/catalog/catalog-lenis";
 import { JsonLd } from "@/components/seo-json-ld";
 import { getCategoryContent, getFooterContent, getHomeContent } from "@/lib/content/site";
 import { absoluteUrl, brandMetadata } from "@/lib/seo";
@@ -49,6 +50,7 @@ export default async function CatalogLayout({ children }: LayoutProps<"/">) {
 
   return (
     <>
+      <CatalogLenis />
       {organization ? <JsonLd data={organization} /> : null}
       <TopNav brandName={footerContent?.brandName ?? ""} categories={categoryContent} />
       <main className="flex-1">
