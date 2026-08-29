@@ -231,7 +231,7 @@ export default function ProductWheel({ products = [] }: { products?: Product[] }
                   alt={product.name}
                   width={220}
                   height={220}
-                  className="h-36 w-full rounded-xs bg-slate-100 p-2 object-contain"
+                  className="h-36 w-full rounded-xs bg-slate-100 object-cover"
                 />
               ) : (
                 <div className="h-36 w-full rounded-xs bg-slate-100" />

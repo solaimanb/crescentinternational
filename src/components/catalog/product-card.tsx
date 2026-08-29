@@ -17,7 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
           alt={product.name}
           width={520}
           height={520}
-          className="aspect-square w-full rounded-xs bg-slate-100 p-2 object-contain"
+          className="aspect-square w-full rounded-xs bg-slate-100 object-cover"
         />
       ) : (
         <div className="aspect-square w-full rounded-xs bg-slate-100" />

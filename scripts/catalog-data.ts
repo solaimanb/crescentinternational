@@ -16,8 +16,9 @@ const home: HomeContent = {
   bannerTitle: "Factory machinery supplied from Dhaka",
   bannerSubtitle:
     "Hydraulic packs, industrial mixers, aggregate plant, food-grade process lines, handling equipment, and packaging machines for plants across Bangladesh.",
-  bannerImage: "",
-  bannerImageAlt: "",
+  bannerImage:
+    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=2000&q=80",
+  bannerImageAlt: "Industrial process piping and plant equipment",
   logoImage: "",
   logoImageAlt: "Crescent International",
   wheelTitle: "Stock we are quoting this week",
@@ -150,6 +151,12 @@ export const seedCategories: CategoryInsert[] = [
   },
 ];
 
+function stock(...ids: string[]) {
+  return ids.map(
+    (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=80`,
+  );
+}
+
 function item(
   slug: string,
   name: string,
@@ -159,6 +166,7 @@ function item(
   shortDescription: string,
   description: string,
   seoHashtags: string[],
+  images: string[],
 ): ProductInsert {
   return {
     slug,
@@ -167,7 +175,7 @@ function item(
     categorySlug,
     priceRange,
     shortDescription,
-    images: [],
+    images,
     contactWhatsapp: SALES_WHATSAPP,
     contactEmail: SALES_EMAIL,
     contactPhone: SALES_PHONE,
@@ -187,6 +195,7 @@ export const seedProducts: ProductInsert[] = [
     "30 L/min pack with 15 kW motor, 210 bar relief, 200 L tank. Used on small presses and scissor lifts.",
     "The CI-HP-30 is a skid-mounted power pack: 15 kW 415 V motor, 30 L/min gear pump, 210 bar relief, return filter, and a 200 litre reservoir with level and temperature switches. We wire it for DOL or star-delta as the site board allows. Typical jobs are 40–80 tonne workshop presses and dock levellers. Oil and hoses are extra; commissioning in Dhaka is included.",
     ["hydraulic-power-pack", "210-bar", "tejgaon"],
+    stock("photo-1513828583688-c52646db42da", "photo-1581092160562-40aa08e78837"),
   ),
   item(
     "ci-cy-80",
@@ -197,6 +206,7 @@ export const seedProducts: ProductInsert[] = [
     "80 tonne, 500 mm stroke, 70 mm rod, SAE ports. Built for scrap balers and mould presses.",
     "Double-acting mill-type cylinder rated 80 tonne at 210 bar, 500 mm stroke, 70 mm induction-hardened rod, honed tube, and SAE 6000 ports. Cushions at both ends. We supply pins and clevises to the drawing you send. Seal kits are stocked in Tejgaon.",
     ["hydraulic-cylinder", "80-tonne"],
+    stock("photo-1581092918056-0c4c3acd3789", "photo-1565043666747-69f6646db940"),
   ),
   item(
     "ci-dv-12",
@@ -207,6 +217,7 @@ export const seedProducts: ProductInsert[] = [
     "Three-spool 12 GPM bank, 315 bar, parallel circuit, 24 V DC solenoids.",
     "Sectional directional valve, three spools, 45 L/min, 315 bar, parallel circuit, with 24 V DC wet-pin solenoids and a main relief. Work-port reliefs optional. Used on small dumpers and hydraulic tables. We match coil voltage to your PLC or pendant.",
     ["directional-valve", "solenoid"],
+    stock("photo-1581092162384-8987c1d64718", "photo-1513828583688-c52646db42da"),
   ),
   item(
     "ci-hp-55",
@@ -217,6 +228,7 @@ export const seedProducts: ProductInsert[] = [
     "55 L/min, 280 bar piston pump, 37 kW, 400 L tank, water-cooled option.",
     "High-pressure unit for larger presses: 37 kW motor, variable piston pump 55 L/min, 280 bar, 400 litre tank, pressure filter, and optional plate cooler for 35 °C ambient. Soft-start panel is quoted with the pack. Lead time from yard if the cooler is in stock; otherwise four to six weeks indent.",
     ["piston-pump", "280-bar"],
+    stock("photo-1504328345606-18bbc8c9d7d1", "photo-1565043666747-69f6646db940"),
   ),
   item(
     "ci-mx-500",
@@ -227,6 +239,7 @@ export const seedProducts: ProductInsert[] = [
     "500 litre pan, 18.5 kW, skip hoist optional. For precast yards in Gazipur.",
     "Planetary pan mixer, 500 litre compacted output, 18.5 kW main drive, Ni-hard tiles, and hydraulic discharge door. Skip hoist and weigh batching are optional. Cycle time is about 60 seconds on 25 MPa mix. We install on a steel frame or on your existing tower.",
     ["planetary-mixer", "precast"],
+    stock("photo-1590496793929-36417d3117de", "photo-1504307651254-35680f356dfd"),
   ),
   item(
     "ci-mx-2000",
@@ -237,6 +250,7 @@ export const seedProducts: ProductInsert[] = [
     "2.0 m³ compacted, 2 × 37 kW, for ready-mix plants at 60–90 m³/h.",
     "Twin-shaft mixer, 2.0 m³ compacted batch, two 37 kW gearmotors, hydraulic discharge, and automatic lubrication. Suited to a 60–90 m³/h wet-mix plant. Wear arms and tiles are local stock. Foundation bolts and a commissioning engineer for three days are in the price for Dhaka Division.",
     ["twin-shaft", "ready-mix"],
+    stock("photo-1541888946425-d81bb19240f5", "photo-1590496793929-36417d3117de"),
   ),
   item(
     "ci-rm-12",
@@ -247,6 +261,7 @@ export const seedProducts: ProductInsert[] = [
     "1,200 litre U-trough, 11 kW, food or dry-mortar liner to order.",
     "Ribbon blender, 1,200 litre working volume, 11 kW, outboard bearings, and a pneumatically actuated discharge. Inner and outer ribbons for dry mortar, spices, or plastic masterbatch. Stainless 304 contact parts for food; mild steel with epoxy for mortar. Dust lid and bag dump optional.",
     ["ribbon-blender", "dry-mix"],
+    stock("photo-1615485290382-441e4d049cb5", "photo-1516594798947-e65505dbb29d"),
   ),
   item(
     "ci-pm-80",
@@ -257,6 +272,7 @@ export const seedProducts: ProductInsert[] = [
     "80 kW inverter, 1,400 mm lift, for paint and adhesive batches up to 2,000 L.",
     "Floor-standing disperser with 80 kW inverter, hydraulic lift 1,400 mm, and a 400 mm Cowles blade. Used on alkyd paint and PVA adhesive. Vessel clamp and explosion-proof motor are quoted separately for solvent rooms.",
     ["disperser", "paint"],
+    stock("photo-1635405074683-96d6921a2a68", "photo-1581092160562-40aa08e78837"),
   ),
   item(
     "ci-jc-400",
@@ -267,6 +283,7 @@ export const seedProducts: ProductInsert[] = [
     "400 × 250 mm feed, 30 kW, 15–40 t/h on granite, toggle protected.",
     "Single-toggle jaw, 400 × 250 mm, 30 kW, CSS 20–60 mm. Throughput 15–40 t/h depending on stone and CSS. Pitman and flywheel are balanced for a 1,500 rpm motor. We supply the v-belt drive, motor rail, and a set of jaw plates. Foundation drawing comes with the order.",
     ["jaw-crusher", "granite"],
+    stock("photo-1504307651254-35680f356dfd", "photo-1541888946425-d81bb19240f5"),
   ),
   item(
     "ci-cs-900",
@@ -277,6 +294,7 @@ export const seedProducts: ProductInsert[] = [
     "900 mm head, 90 kW, hydraulic CSS, for secondary granite and basalt.",
     "Symons-type cone, 900 mm, 90 kW, hydraulic CSS adjustment and tramp release. Typical secondary duty 50–80 t/h. Bowl liner and mantle are high-chrome. Lube skid and hydraulic power pack ship with the crusher. Indent only; allow eight to ten weeks plus customs.",
     ["cone-crusher", "secondary"],
+    stock("photo-1541888946425-d81bb19240f5", "photo-1601584115197-04ecc0da31d7"),
   ),
   item(
     "ci-vs-1200",
@@ -287,6 +305,7 @@ export const seedProducts: ProductInsert[] = [
     "1,200 × 3,000 mm, 15 kW, 3 decks, circular throw, for 0–40 mm products.",
     "Inclined circular-throw screen, 1,200 × 3,000 mm, three decks, 15 kW, coil springs. Mesh is quoted to your cut sizes (commonly 40 / 20 / 10 mm). Spray bars for wet screening are optional. We align it on the structure you already have or supply a new chassis.",
     ["vibrating-screen", "aggregate"],
+    stock("photo-1590496793929-36417d3117de", "photo-1601584115197-04ecc0da31d7"),
   ),
   item(
     "ci-bf-20",
@@ -297,6 +316,7 @@ export const seedProducts: ProductInsert[] = [
     "800 mm belt, 20 m centres, 7.5 kW, variable speed for crusher feed.",
     "Belt feeder, 800 mm EP belt, 20 m centres, 7.5 kW SEW or equivalent gearbox, inverter ready. Skirt boards, pull-cord, and belt drift switches included. Used under a hopper ahead of the CI-JC-400. Idlers and pulley lagging are local replacements.",
     ["belt-feeder", "crusher-feed"],
+    stock("photo-1601584115197-04ecc0da31d7", "photo-1504307651254-35680f356dfd"),
   ),
   item(
     "ci-fp-300",
@@ -307,6 +327,7 @@ export const seedProducts: ProductInsert[] = [
     "300 litre SS304 kettle, steam jacket 3 bar, scrape agitator, for sauces and halwa.",
     "Jacketed kettle, 300 litre, SS304 product contact, 3 bar steam jacket, scrape-surface agitator 1.5 kW, and a bottom ball valve. Lid with charging port. Built for wet rooms; IP55 motors. We hydro-test the jacket before dispatch. Steam trap set is extra.",
     ["jacketed-kettle", "ss304"],
+    stock("photo-1556910103-1c02745aae4d", "photo-1600565193348-f74bd3c7ccdf"),
   ),
   item(
     "ci-vw-800",
@@ -317,6 +338,7 @@ export const seedProducts: ProductInsert[] = [
     "800 mm bubble washer, 3 t/h on leafy greens, SS304, recirculation tank.",
     "Air-bubble washer, 800 mm width, about 3 t/h on spinach and coriander, SS304 tank, recirculation pump, and a fresh-water rinse section. Used by frozen-food and catering kitchens in Dhaka. Ozone or chlorine dosing skid quoted on request.",
     ["vegetable-washer", "bubble"],
+    stock("photo-1464226184884-fa280b87c399", "photo-1625246333195-78d9c38ad449"),
   ),
   item(
     "ci-ff-150",
@@ -327,6 +349,7 @@ export const seedProducts: ProductInsert[] = [
     "Two-head piston filler, 50–500 ml, for paste, ghee, and yoghurt cups.",
     "Semi-automatic two-head piston filler, 50–500 ml cylinders, SS316 contact, foot-switch or photo-eye. Change parts for cups and jars. Hopper 40 litre with optional agitator for viscous masala paste. Output depends on operator; typically 12–18 cups/min.",
     ["piston-filler", "dairy"],
+    stock("photo-1556911220-bff31c812dba", "photo-1556912173-46c336c7fd55"),
   ),
   item(
     "ci-sc-40",
@@ -337,6 +360,7 @@ export const seedProducts: ProductInsert[] = [
     "Ø 200 mm, 4 m, SS304 tube, 2.2 kW, for spice and flour transfer.",
     "Tubular screw, 200 mm, 4 m centres, SS304, 2.2 kW, inlet hopper and outlet spout. Flighting is continuous. Used between a ribbon blender and a packing hopper. Longer runs are made in sections. Inlet grate and magnet are optional.",
     ["screw-conveyor", "ss304"],
+    stock("photo-1615485290382-441e4d049cb5", "photo-1516594798947-e65505dbb29d"),
   ),
   item(
     "ci-fl-3",
@@ -347,6 +371,7 @@ export const seedProducts: ProductInsert[] = [
     "3 tonne, 4.5 m mast, 48 V, cushion tyres, for indoor RMG warehouses.",
     "Four-wheel electric forklift, 3,000 kg at 500 mm, 4.5 m duplex mast, 48 V lead-acid, side shift, and cushion tyres. Charger included. We register it and train two operators in Dhaka. Lithium pack is a priced option. Service is from Tejgaon.",
     ["forklift", "3-tonne", "electric"],
+    stock("photo-1553413077-190dd305871c", "photo-1565793298595-6a879b1d9492"),
   ),
   item(
     "ci-hc-2",
@@ -357,6 +382,7 @@ export const seedProducts: ProductInsert[] = [
     "2,000 kg, 1,150 mm forks, nylon wheels, for 1,200 × 1,000 pallets.",
     "Manual pallet truck, 2,000 kg, 1,150 × 160 mm forks, nylon steer and load wheels. Entry rollers for closed pallets. We keep seals and pumps on the shelf. Not for block pallets unless you order the 800 mm fork set.",
     ["pallet-truck", "2-tonne"],
+    stock("photo-1587293852726-70cdb56c2866", "photo-1586528116311-ad8dd3c8310d"),
   ),
   item(
     "ci-st-12",
@@ -367,6 +393,7 @@ export const seedProducts: ProductInsert[] = [
     "1.2 tonne, 3.3 m lift, 24 V, for mezzanine feeding in garment stores.",
     "Pedestrian stacker, 1,200 kg, 3.3 m triplex mast, 24 V, straddle or fork-over to match your pallets. Battery and charger included. Aisle width about 2.2 m with 1,200 mm pallets. We set the tilt and train the store team.",
     ["stacker", "walkie"],
+    stock("photo-1565793298595-6a879b1d9492", "photo-1553413077-190dd305871c"),
   ),
   item(
     "ci-cr-5",
@@ -377,6 +404,7 @@ export const seedProducts: ProductInsert[] = [
     "5 tonne single girder, 12 m span, 6 m lift, pendant, for fabrication bays.",
     "Single-girder EOT, 5 tonne, 12 m span, 6 m lift, dual-speed hoist, pendant control. End carriages and festoon included. Building steel must take the loads; we supply reactions with the drawing. Installation is quoted after a site visit. Load test is done before handover.",
     ["eot-crane", "5-tonne"],
+    stock("photo-1581092918056-0c4c3acd3789", "photo-1565043666747-69f6646db940"),
   ),
   item(
     "ci-sw-200",
@@ -387,6 +415,7 @@ export const seedProducts: ProductInsert[] = [
     "Turntable 1,650 mm, 1.5 t, 2.4 m mast, for pallet loads leaving the plant.",
     "Turntable stretch wrapper, 1,650 mm disc, 1,500 kg, 2.4 m film mast, 15 rpm. Pre-stretch 200% carriage. Used on export cartons and sack pallets. Film is not included. We set wrap counts to your load test.",
     ["stretch-wrapper", "pallet"],
+    stock("photo-1586528116311-ad8dd3c8310d", "photo-1578575437130-527eed3abbec"),
   ),
   item(
     "ci-cs-50",
@@ -397,6 +426,7 @@ export const seedProducts: ProductInsert[] = [
     "Top and bottom tape, 50 cartons/min, for 200–500 mm box heights.",
     "Uniform carton sealer, top and bottom 2 inch tape, up to about 50 cartons per minute on a straight line. Box height 200–500 mm with crank adjust. Infeed and outfeed tables extra. Tape heads take local BOPP.",
     ["carton-sealer", "tape"],
+    stock("photo-1578575437130-527eed3abbec", "photo-1610557892470-55d9e80c0bce"),
   ),
   item(
     "ci-lb-10",
@@ -407,6 +437,7 @@ export const seedProducts: ProductInsert[] = [
     "Wipe-on applicator, 10–30 m/min, for bottles and cartons on an existing belt.",
     "Wipe-on label applicator for pressure-sensitive labels, 10–30 m/min, photoelectric start. Mounts on your conveyor. Max label width 120 mm. Printer is not included; we integrate a third-party coder if you already own one.",
     ["label-applicator", "ps-label"],
+    stock("photo-1615485290382-441e4d049cb5", "photo-1610557892470-55d9e80c0bce"),
   ),
   item(
     "ci-bg-25",
@@ -417,6 +448,7 @@ export const seedProducts: ProductInsert[] = [
     "25 kg net weigher, gravity feed, for rice, sugar, and plastic pellets.",
     "Open-mouth bagger with 25 kg net weigher, gravity feeder, and a sewing pedestal. Accuracy typically ±20 g on free-flowing rice. Dust hood and bag magazine optional. Throughput 6–8 bags/min with two operators. Load cells are sealed for a dusty mill.",
     ["bagger", "25kg"],
+    stock("photo-1625246333195-78d9c38ad449", "photo-1615811361523-6bd03d7748e7"),
   ),
 ];
 

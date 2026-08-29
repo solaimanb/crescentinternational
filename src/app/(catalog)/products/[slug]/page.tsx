@@ -60,7 +60,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
                   alt={`${product.name} ${index + 1}`}
                   width={900}
                   height={900}
-                  className="aspect-square w-full rounded-xs bg-slate-100 p-3 object-contain"
+                  className="aspect-square w-full rounded-xs bg-slate-100 object-cover"
                 />
               </div>
             ))}
