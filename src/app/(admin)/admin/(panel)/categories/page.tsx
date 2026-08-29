@@ -1,14 +1,20 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { PaginationNav } from "@/components/pagination-nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllCategories } from "@/lib/catalog/categories";
 import { AdminDeleteButton } from "@/app/(admin)/admin/_components/admin-delete-button";
 import { deleteCategoryAction } from "@/app/(admin)/admin/(panel)/actions";
+import { ADMIN_PAGE_SIZE, paginate } from "@/lib/paginate";
 
-export default async function AdminCategoriesPage() {
+export default async function AdminCategoriesPage({
+  searchParams,
+}: PageProps<"/admin/categories">) {
+  const params = await searchParams;
   const categories = await getAllCategories();
+  const { page, totalPages, items } = paginate(categories, params.page, ADMIN_PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -22,7 +28,7 @@ export default async function AdminCategoriesPage() {
         <CardHeader>
           <CardTitle>All categories</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <Table>
             <TableHeader>
               <TableRow>
@@ -33,7 +39,7 @@ export default async function AdminCategoriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categories.map((item) => (
+              {items.map((item) => (
                 <TableRow key={item.slug}>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.slug}</TableCell>
@@ -61,6 +67,7 @@ export default async function AdminCategoriesPage() {
               ))}
             </TableBody>
           </Table>
+          <PaginationNav pathname="/admin/categories" page={page} totalPages={totalPages} />
         </CardContent>
       </Card>
     </div>

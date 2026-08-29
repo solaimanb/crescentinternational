@@ -1,22 +1,16 @@
 import Link from "next/link";
-import type { Metadata, Route } from "next";
+import type { Metadata } from "next";
 import ProductCard from "@/components/catalog/product-card";
+import { PaginationNav } from "@/components/pagination-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getCategoryContent } from "@/lib/content/site";
+import { paginate } from "@/lib/paginate";
 
 export const metadata: Metadata = {
   title: "All Products | Crescent International",
 };
-
-const PAGE_SIZE = 12;
 
 export default async function AllProductsPage({
   searchParams,
@@ -29,24 +23,14 @@ export default async function AllProductsPage({
     ? products.filter((product) => product.categorySlug === selectedCategory)
     : products;
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
-  const page = Math.min(Math.max(Number(params.page) || 1, 1), totalPages);
-  const pagedProducts = filteredProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const { page, totalPages, items: pagedProducts } = paginate(
+    filteredProducts,
+    params.page,
+    12,
+  );
 
   const selectedCategoryName =
     categories.find((item) => item.slug === selectedCategory)?.name || "All Categories";
-
-  function hrefFor(target: number) {
-    const query = new URLSearchParams();
-    if (selectedCategory) {
-      query.set("category", selectedCategory);
-    }
-    if (target > 1) {
-      query.set("page", String(target));
-    }
-    const search = query.toString();
-    return (search ? `/all-products?${search}` : "/all-products") as Route;
-  }
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
@@ -81,19 +65,13 @@ export default async function AllProductsPage({
         ))}
       </div>
 
-      {totalPages > 1 ? (
-        <Pagination className="mt-6">
-          <PaginationContent>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
-              <PaginationItem key={item}>
-                <PaginationLink href={hrefFor(item)} isActive={item === page}>
-                  {item}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-          </PaginationContent>
-        </Pagination>
-      ) : null}
+      <PaginationNav
+        className="mt-6"
+        pathname="/all-products"
+        page={page}
+        totalPages={totalPages}
+        query={selectedCategory ? { category: selectedCategory } : {}}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { PaginationNav } from "@/components/pagination-nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyContent, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
@@ -9,11 +10,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getHomeBanners } from "@/lib/content/site";
 import { AdminDeleteButton } from "@/app/(admin)/admin/_components/admin-delete-button";
 import { deleteBannerAction } from "@/app/(admin)/admin/(panel)/actions";
+import { ADMIN_PAGE_SIZE, paginate } from "@/lib/paginate";
 
 const BANNER_RATIO = 21 / 8;
 
-export default async function AdminBannersPage() {
+export default async function AdminBannersPage({
+  searchParams,
+}: PageProps<"/admin/banners">) {
+  const params = await searchParams;
   const banners = await getHomeBanners();
+  const { page, totalPages, items } = paginate(banners, params.page, ADMIN_PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -27,7 +33,7 @@ export default async function AdminBannersPage() {
         <CardHeader>
           <CardTitle>Homepage banners</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {banners.length === 0 ? (
             <Empty>
               <EmptyHeader>
@@ -50,7 +56,7 @@ export default async function AdminBannersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {banners.map((banner) => (
+                {items.map((banner) => (
                   <TableRow key={banner.id}>
                     <TableCell className="w-40">
                       <AspectRatio ratio={BANNER_RATIO} className="w-36 overflow-hidden rounded-xs bg-muted">
@@ -91,6 +97,9 @@ export default async function AdminBannersPage() {
               </TableBody>
             </Table>
           )}
+          {banners.length > 0 ? (
+            <PaginationNav pathname="/admin/banners" page={page} totalPages={totalPages} />
+          ) : null}
         </CardContent>
       </Card>
     </div>
