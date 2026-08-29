@@ -1,79 +1,125 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { Layers, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Empty, EmptyContent, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { getOverviewMatrix } from "@/lib/admin/overview-matrix";
 
 export default async function AdminOverviewPage() {
   const matrix = await getOverviewMatrix();
 
-  const stats = [
-    { label: "Categories", value: matrix.totals.categories, href: "/admin/categories" as Route },
-    { label: "Products", value: matrix.totals.products, href: "/admin/products" as Route },
-    { label: "Without images", value: matrix.totals.productsWithoutImages, href: "/admin/products" as Route },
-    { label: "Banners", value: matrix.totals.banners, href: "/admin/banners" as Route },
-    { label: "Settings", value: matrix.totals.settings, href: "/admin/settings" as Route },
-  ];
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Catalogue size and what each category shows on the homepage.</p>
+      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader>
-              <CardDescription>{stat.label}</CardDescription>
-              <CardTitle className="text-3xl tabular-nums">{stat.value}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button nativeButton={false} variant="link" render={<Link href={stat.href} />}>
-                Open
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <div className="flex size-8 items-center justify-center rounded-xs bg-muted">
+              <Layers className="size-4" />
+            </div>
+            <CardDescription>Categories</CardDescription>
+            <CardTitle className="text-3xl tabular-nums tracking-tight">{matrix.totals.categories}</CardTitle>
+            <CardAction>
+              <Button nativeButton={false} size="sm" variant="outline" render={<Link href={"/admin/categories" as Route} />}>
+                View
               </Button>
-            </CardContent>
-          </Card>
-        ))}
+            </CardAction>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div className="flex size-8 items-center justify-center rounded-xs bg-muted">
+              <Package className="size-4" />
+            </div>
+            <CardDescription>Products</CardDescription>
+            <CardTitle className="text-3xl tabular-nums tracking-tight">{matrix.totals.products}</CardTitle>
+            <CardAction>
+              <Button nativeButton={false} size="sm" variant="outline" render={<Link href={"/admin/products" as Route} />}>
+                View
+              </Button>
+            </CardAction>
+          </CardHeader>
+        </Card>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Catalogue matrix</CardTitle>
+        <CardHeader className="border-b">
+          <CardTitle>By category</CardTitle>
           <CardDescription>
             {matrix.totals.productsWithImages} of {matrix.totals.products} products have images
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-right">Products</TableHead>
-                <TableHead className="text-right">With images</TableHead>
-                <TableHead className="text-right">Home desktop</TableHead>
-                <TableHead className="text-right">Home mobile</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {matrix.categories.map((row) => (
-                <TableRow key={row.slug}>
-                  <TableCell>
-                    <Button
-                      nativeButton={false}
-                      variant="link"
-                      render={<Link href={`/admin/categories/${row.slug}` as Route} />}
-                    >
-                      {row.name}
-                    </Button>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">{row.products}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.withImages}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.homepageDesktopCount}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.homepageMobileCount}</TableCell>
+        <CardContent className="px-0">
+          {matrix.categories.length === 0 ? (
+            <Empty className="py-10">
+              <EmptyHeader>
+                <EmptyTitle>No categories</EmptyTitle>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button nativeButton={false} render={<Link href={"/admin/categories/new" as Route} />}>
+                  New category
+                </Button>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-4">Category</TableHead>
+                  <TableHead className="px-4 text-right">Products</TableHead>
+                  <TableHead className="px-4 text-right">Images</TableHead>
+                  <TableHead className="px-4 text-right">Home desktop</TableHead>
+                  <TableHead className="px-4 text-right">Home mobile</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {matrix.categories.map((row) => (
+                  <TableRow key={row.slug}>
+                    <TableCell className="px-4">
+                      <Link href={`/admin/categories/${row.slug}` as Route} className="font-medium hover:underline">
+                        {row.name}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{row.slug}</p>
+                    </TableCell>
+                    <TableCell className="px-4 text-right tabular-nums">{row.products}</TableCell>
+                    <TableCell className="px-4 text-right tabular-nums">{row.withImages}</TableCell>
+                    <TableCell className="px-4 text-right tabular-nums">{row.homepageDesktopCount}</TableCell>
+                    <TableCell className="px-4 text-right tabular-nums">{row.homepageMobileCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell className="px-4">Total</TableCell>
+                  <TableCell className="px-4 text-right tabular-nums">{matrix.totals.products}</TableCell>
+                  <TableCell className="px-4 text-right tabular-nums">{matrix.totals.productsWithImages}</TableCell>
+                  <TableCell className="px-4" />
+                  <TableCell className="px-4" />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

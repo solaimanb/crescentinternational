@@ -1,8 +1,7 @@
 import "server-only";
 
 import { asc } from "drizzle-orm";
-import { category, product, siteSetting } from "@/lib/catalog-schema";
-import { homeBannersSchema } from "@/lib/content/schema";
+import { category, product } from "@/lib/catalog-schema";
 import { db } from "@/lib/db";
 
 export type OverviewMatrix = {
@@ -10,9 +9,6 @@ export type OverviewMatrix = {
     categories: number;
     products: number;
     productsWithImages: number;
-    productsWithoutImages: number;
-    banners: number;
-    settings: number;
   };
   categories: {
     slug: string;
@@ -25,7 +21,7 @@ export type OverviewMatrix = {
 };
 
 export async function getOverviewMatrix(): Promise<OverviewMatrix> {
-  const [categories, products, settings] = await Promise.all([
+  const [categories, products] = await Promise.all([
     db
       .select({
         slug: category.slug,
@@ -36,12 +32,7 @@ export async function getOverviewMatrix(): Promise<OverviewMatrix> {
       .from(category)
       .orderBy(asc(category.sortOrder), asc(category.name)),
     db.select({ categorySlug: product.categorySlug, images: product.images }).from(product),
-    db.select({ id: siteSetting.id, data: siteSetting.data }).from(siteSetting),
   ]);
-
-  const bannersRow = settings.find((row) => row.id === "banners");
-  const bannersParsed = bannersRow ? homeBannersSchema.safeParse(bannersRow.data) : null;
-  const bannerCount = bannersParsed?.success ? bannersParsed.data.items.length : 0;
 
   const byCategory = new Map<string, { products: number; withImages: number }>();
   let productsWithImages = 0;
@@ -64,9 +55,6 @@ export async function getOverviewMatrix(): Promise<OverviewMatrix> {
       categories: categories.length,
       products: products.length,
       productsWithImages,
-      productsWithoutImages: products.length - productsWithImages,
-      banners: bannerCount,
-      settings: settings.length,
     },
     categories: categories.map((item) => {
       const counts = byCategory.get(item.slug) ?? { products: 0, withImages: 0 };
