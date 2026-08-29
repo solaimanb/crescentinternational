@@ -60,33 +60,38 @@ export default async function HomePage() {
 
           return (
             <section key={group.slug} id={`category-${group.slug}`} className="scroll-mt-32">
-              <div className="mb-3 flex items-center justify-between gap-4">
-                <h2 className="text-2xl font-bold tracking-tight">{group.name}</h2>
-                <Button
-                  nativeButton={false}
-                  variant="link"
-                  render={<Link href={`/all-products?category=${group.slug}` as Route} />}
-                >
-                  See all
-                </Button>
-              </div>
+              <Card className="rounded-xs">
+                <CardHeader className="border-b">
+                  <CardTitle>{group.name}</CardTitle>
+                  <CardAction>
+                    <Button
+                      nativeButton={false}
+                      variant="link"
+                      render={<Link href={`/all-products?category=${group.slug}` as Route} />}
+                    >
+                      See all
+                    </Button>
+                  </CardAction>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  {categorySettings.description ? (
+                    <p className="mb-5 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
+                      {categorySettings.description}
+                    </p>
+                  ) : null}
 
-              {categorySettings.description ? (
-                <p className="mb-5 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
-                  {categorySettings.description}
-                </p>
-              ) : null}
-
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-                {group.products.slice(0, categorySettings.homepageDesktopCount).map((product, index) => (
-                  <div
-                    key={product.slug}
-                    className={index >= categorySettings.homepageMobileCount ? "hidden md:block" : "block"}
-                  >
-                    <ProductCard product={product} />
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                    {group.products.slice(0, categorySettings.homepageDesktopCount).map((product, index) => (
+                      <div
+                        key={product.slug}
+                        className={index >= categorySettings.homepageMobileCount ? "hidden md:block" : "block"}
+                      >
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </CardContent>
+              </Card>
             </section>
           );
         })}

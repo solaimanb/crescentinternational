@@ -169,7 +169,7 @@ export default function ProductContactActions({
             }
           }}
         >
-          <div className="w-full max-w-md rounded-2xl p-5">
+          <div className="w-full max-w-md rounded-xs p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h3 className="text-lg font-bold text-white">{activeConfig.title}</h3>
               <button
@@ -190,7 +190,7 @@ export default function ProductContactActions({
                   target={activeConfig.target}
                   rel={activeConfig.target === "_blank" ? "noopener noreferrer" : undefined}
                   onClick={() => setActiveModal("")}
-                  className="block rounded-lg border border-white/70 bg-white/85 px-3 py-2 transition hover:border-white hover:bg-white/95"
+                  className="block rounded-xs border border-white/70 bg-white/85 px-3 py-2 transition hover:border-white hover:bg-white/95"
                 >
                   <p className="text-sm font-semibold text-slate-900">{item.label}</p>
                   <p className="text-xs text-slate-600">{item.value}</p>

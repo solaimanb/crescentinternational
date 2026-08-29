@@ -53,7 +53,7 @@ export default async function AdminBannersPage() {
                 {banners.map((banner) => (
                   <TableRow key={banner.id}>
                     <TableCell className="w-40">
-                      <AspectRatio ratio={BANNER_RATIO} className="w-36 overflow-hidden rounded-md bg-muted">
+                      <AspectRatio ratio={BANNER_RATIO} className="w-36 overflow-hidden rounded-xs bg-muted">
                         {banner.image ? (
                           <Image
                             src={banner.image}

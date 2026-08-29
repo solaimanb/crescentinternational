@@ -65,7 +65,7 @@ export function BannerForm({ banner }: { banner?: HomeBanner }) {
           <Field>
             <FieldLabel htmlFor="imageFile">Image</FieldLabel>
             {banner?.image ? (
-              <AspectRatio ratio={21 / 8} className="mb-3 overflow-hidden rounded-lg bg-muted">
+              <AspectRatio ratio={21 / 8} className="mb-3 overflow-hidden rounded-xs bg-muted">
                 <Image src={banner.image} alt={banner.imageAlt || banner.title} fill sizes="640px" className="object-cover" />
               </AspectRatio>
             ) : null}

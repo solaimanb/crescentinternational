@@ -40,7 +40,7 @@ export default function SiteFooter({ footerContent }: { footerContent: FooterCon
             </p>
             <FindUsMapLink
               href={footerContent.mapUrl}
-              className="mt-2 inline-flex rounded-lg border border-cyan-400 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
+              className="mt-2 inline-flex rounded-xs border border-cyan-400 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
             >
               {footerContent.mapPlaceLabel}
             </FindUsMapLink>

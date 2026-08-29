@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   Carousel,
@@ -22,16 +24,22 @@ export default function HomeBanners({
   logoImage: string;
   logoImageAlt: string;
 }) {
+  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
+
   if (banners.length === 0) {
     return null;
   }
 
   return (
-    <Carousel opts={{ loop: banners.length > 1 }} className="w-full">
+    <Carousel
+      opts={{ loop: banners.length > 1 }}
+      plugins={banners.length > 1 ? [autoplay.current] : undefined}
+      className="w-full overflow-hidden rounded-xs"
+    >
       <CarouselContent className="-ml-0">
         {banners.map((banner, slide) => (
           <CarouselItem key={banner.id} className="pl-0">
-            <AspectRatio ratio={BANNER_RATIO} className="overflow-hidden rounded-xl bg-muted">
+            <AspectRatio ratio={BANNER_RATIO} className="overflow-hidden rounded-xs bg-muted">
               {banner.image ? (
                 <Image
                   suppressHydrationWarning
