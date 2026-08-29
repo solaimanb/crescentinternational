@@ -3,11 +3,16 @@ export type ContactOption = {
   value: string;
 };
 
+export type HomeBanner = {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  imageAlt: string;
+  sortOrder: number;
+};
+
 export type HomeContent = {
-  bannerTitle: string;
-  bannerSubtitle: string;
-  bannerImage: string;
-  bannerImageAlt: string;
   logoImage: string;
   logoImageAlt: string;
   wheelTitle: string;

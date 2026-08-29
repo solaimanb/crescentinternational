@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
-import { Factory, LayoutDashboard, Layers, LogOut, Package, Settings } from "lucide-react";
+import { Factory, Images, LayoutDashboard, Layers, LogOut, Package, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +23,7 @@ const nav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/categories", label: "Categories", icon: Layers },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/banners", label: "Banners", icon: Images },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 

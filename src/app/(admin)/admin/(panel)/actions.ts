@@ -10,6 +10,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadMediaFile } from "@/lib/storage";
 import {
+  bannerFormSchema,
   categoryFormSchema,
   productFormSchema,
   siteSettingsFormSchema,
@@ -17,6 +18,7 @@ import {
 import {
   contactContentSchema,
   footerContentSchema,
+  homeBannersSchema,
   homeContentSchema,
   pageContentSchema,
 } from "@/lib/content/schema";
@@ -42,6 +44,7 @@ function revalidateCatalog(slug?: string) {
   revalidatePath("/admin");
   revalidatePath("/admin/products");
   revalidatePath("/admin/categories");
+  revalidatePath("/admin/banners");
   if (slug) {
     revalidatePath(`/products/${slug}`);
     revalidatePath(`/admin/products/${slug}`);
@@ -70,7 +73,7 @@ async function upsertProduct(values: typeof product.$inferInsert) {
   await db.insert(product).values(values);
 }
 
-async function uploadProductImages(slug: string, files: File[]) {
+async function uploadCatalogImages(files: File[], prefix: string) {
   const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
   const urls: string[] = [];
 
@@ -84,7 +87,7 @@ async function uploadProductImages(slug: string, files: File[]) {
     if (file.size > 5 * 1024 * 1024) {
       throw new Error("Images must be 5MB or smaller.");
     }
-    urls.push(await uploadMediaFile(file, `products/${slug || "draft"}`));
+    urls.push(await uploadMediaFile(file, prefix));
   }
 
   return urls;
@@ -132,7 +135,7 @@ export async function saveProductAction(
 
   let uploaded: string[] = [];
   try {
-    uploaded = await uploadProductImages(slug, newFiles);
+    uploaded = await uploadCatalogImages(newFiles, `products/${slug || "draft"}`);
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Could not upload images." };
   }
@@ -296,10 +299,6 @@ export async function saveSiteSettingsAction(
   }
 
   const home = homeContentSchema.safeParse({
-    bannerTitle: values.bannerTitle,
-    bannerSubtitle: values.bannerSubtitle,
-    bannerImage: values.bannerImage,
-    bannerImageAlt: values.bannerImageAlt,
     logoImage: values.logoImage,
     logoImageAlt: values.logoImageAlt,
     wheelTitle: values.wheelTitle,
@@ -371,4 +370,89 @@ export async function saveSiteSettingsAction(
   revalidatePath("/admin");
   revalidatePath("/admin/settings");
   redirect("/admin/settings" as Route);
+}
+
+async function loadBannerItems() {
+  const [row] = await db.select().from(siteSetting).where(eq(siteSetting.id, "banners")).limit(1);
+  if (!row) {
+    return [];
+  }
+  const parsed = homeBannersSchema.safeParse(row.data);
+  return parsed.success ? parsed.data.items : [];
+}
+
+export async function saveBannerAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = bannerFormSchema.safeParse({
+    id: field(formData, "id"),
+    title: field(formData, "title"),
+    subtitle: field(formData, "subtitle"),
+    imageAlt: field(formData, "imageAlt"),
+    sortOrder: field(formData, "sortOrder"),
+    image: field(formData, "image"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid banner." };
+  }
+
+  const sortOrder = Number(parsed.data.sortOrder);
+  if (!Number.isFinite(sortOrder) || sortOrder < 1) {
+    return { error: "Order must be a number." };
+  }
+
+  const file = formData.get("imageFile");
+  let image = parsed.data.image;
+  if (file instanceof File && file.size > 0) {
+    try {
+      const [uploaded] = await uploadCatalogImages([file], `banners/${parsed.data.id || "draft"}`);
+      if (uploaded) {
+        image = uploaded;
+      }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Could not upload image." };
+    }
+  }
+
+  if (!image) {
+    return { error: "Add a banner image." };
+  }
+
+  const id = parsed.data.id || crypto.randomUUID();
+  const next = {
+    id,
+    title: parsed.data.title,
+    subtitle: parsed.data.subtitle,
+    image,
+    imageAlt: parsed.data.imageAlt,
+    sortOrder,
+  };
+  const remaining = (await loadBannerItems()).filter((item) => item.id !== id);
+  remaining.push(next);
+  remaining.sort((a, b) => a.sortOrder - b.sortOrder);
+
+  await upsertSetting("banners", { items: remaining });
+  revalidateCatalog();
+  revalidatePath("/admin/banners");
+  redirect(`/admin/banners/${id}` as Route);
+}
+
+export async function deleteBannerAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAdmin();
+  const id = field(formData, "id").trim();
+  if (!id) {
+    return { error: "Missing banner." };
+  }
+
+  const items = (await loadBannerItems()).filter((item) => item.id !== id);
+  await upsertSetting("banners", { items });
+  revalidateCatalog();
+  revalidatePath("/admin/banners");
+  redirect("/admin/banners" as Route);
 }

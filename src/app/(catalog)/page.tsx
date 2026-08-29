@@ -1,16 +1,19 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
+import HomeBanners from "@/components/catalog/home-banners";
 import ProductCard from "@/components/catalog/product-card";
 import ProductWheel from "@/components/catalog/product-wheel";
 import CmsLink from "@/components/layout/cms-link";
+import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getCategoryGroups, getWheelProducts } from "@/lib/catalog/groups";
-import { getCategoryContent, getHomeContent } from "@/lib/content/site";
+import { getCategoryContent, getHomeBanners, getHomeContent } from "@/lib/content/site";
 
 export default async function HomePage() {
   const products = await getAllProducts();
   const homeContent = await getHomeContent();
+  const banners = await getHomeBanners();
   const categoryContent = await getCategoryContent();
   const categoryDefinitions = categoryContent.map((category) => ({
     slug: category.slug,
@@ -24,54 +27,28 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
-      {homeContent ? (
-        <section className="relative isolate overflow-hidden rounded-xs border border-slate-200 bg-slate-900 shadow-xl">
-          {homeContent.bannerImage ? (
-            <Image
-              suppressHydrationWarning
-              src={homeContent.bannerImage}
-              alt={homeContent.bannerImageAlt}
-              width={1600}
-              height={700}
-              priority
-              className="h-[300px] w-full object-cover md:h-[420px]"
-            />
-          ) : (
-            <div className="h-[300px] w-full bg-slate-800 md:h-[420px]" />
-          )}
-          <div className="absolute inset-0 bg-slate-950/45" />
-          <div className="absolute inset-0 flex flex-col justify-center gap-4 p-6 text-white md:p-12">
-            {homeContent.logoImage ? (
-              <Image
-                suppressHydrationWarning
-                src={homeContent.logoImage}
-                alt={homeContent.logoImageAlt}
-                width={320}
-                height={120}
-                className="h-auto w-48 md:w-72"
-              />
-            ) : null}
-            <h1 className="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{homeContent.bannerTitle}</h1>
-            <p className="max-w-xl text-sm text-slate-100 md:text-base">{homeContent.bannerSubtitle}</p>
-          </div>
-        </section>
+      {banners.length > 0 ? (
+        <HomeBanners
+          banners={banners}
+          logoImage={homeContent?.logoImage ?? ""}
+          logoImageAlt={homeContent?.logoImageAlt ?? ""}
+        />
       ) : null}
 
       {homeContent ? (
-        <section className="mt-10 rounded-xs border border-slate-200 bg-white p-4 shadow-lg md:p-6">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-xl font-bold text-slate-900 md:text-2xl">{homeContent.wheelTitle}</h2>
-            <CmsLink
-              href={homeContent.wheelCtaHref}
-              className="text-sm font-semibold text-cyan-700 transition hover:text-cyan-900"
-            >
-              {homeContent.wheelCtaLabel}
-            </CmsLink>
-          </div>
-          <div className="catalog-marquee">
+        <Card className="mt-10">
+          <CardHeader className="border-b">
+            <CardTitle>{homeContent.wheelTitle}</CardTitle>
+            <CardAction>
+              <Button nativeButton={false} variant="link" render={<CmsLink href={homeContent.wheelCtaHref} />}>
+                {homeContent.wheelCtaLabel}
+              </Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent className="pt-4">
             <ProductWheel products={wheelProducts} />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       ) : null}
 
       <section className="mt-12 space-y-10">
@@ -84,17 +61,18 @@ export default async function HomePage() {
           return (
             <section key={group.slug} id={`category-${group.slug}`} className="scroll-mt-32">
               <div className="mb-3 flex items-center justify-between gap-4">
-                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">{group.name}</h2>
-                <Link
-                  href={`/all-products?category=${group.slug}` as Route}
-                  className="text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+                <h2 className="text-2xl font-bold tracking-tight">{group.name}</h2>
+                <Button
+                  nativeButton={false}
+                  variant="link"
+                  render={<Link href={`/all-products?category=${group.slug}` as Route} />}
                 >
                   See all
-                </Link>
+                </Button>
               </div>
 
               {categorySettings.description ? (
-                <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-600 md:text-base">
+                <p className="mb-5 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
                   {categorySettings.description}
                 </p>
               ) : null}

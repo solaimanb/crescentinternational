@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 type CmsLinkProps = {
   href: string;
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function CmsLink({ href, className, children }: CmsLinkProps) {

@@ -5,11 +5,20 @@ const contactOptionSchema = z.object({
   value: z.string(),
 });
 
+export const homeBannerSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  subtitle: z.string(),
+  image: z.string(),
+  imageAlt: z.string(),
+  sortOrder: z.number().int(),
+});
+
+export const homeBannersSchema = z.object({
+  items: z.array(homeBannerSchema),
+});
+
 export const homeContentSchema = z.object({
-  bannerTitle: z.string(),
-  bannerSubtitle: z.string(),
-  bannerImage: z.string(),
-  bannerImageAlt: z.string(),
   logoImage: z.string(),
   logoImageAlt: z.string(),
   wheelTitle: z.string(),

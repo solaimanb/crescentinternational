@@ -59,10 +59,6 @@ export function SettingsForm({
       aboutButtonHref: footer?.aboutButtonHref ?? "",
       footerPhoneLabel: footer?.phoneLabel ?? "",
       footerEmailLabel: footer?.emailLabel ?? "",
-      bannerTitle: home?.bannerTitle ?? "",
-      bannerSubtitle: home?.bannerSubtitle ?? "",
-      bannerImage: home?.bannerImage ?? "",
-      bannerImageAlt: home?.bannerImageAlt ?? "",
       logoImage: home?.logoImage ?? "",
       logoImageAlt: home?.logoImageAlt ?? "",
       wheelTitle: home?.wheelTitle ?? "",
@@ -136,14 +132,10 @@ export function SettingsForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Homepage</CardTitle>
+          <CardTitle>Featured catalogue</CardTitle>
         </CardHeader>
         <CardContent>
           <FieldGroup className="gap-4 md:grid md:grid-cols-2">
-            <FormInput control={form.control} name="bannerTitle" label="Banner title" />
-            <FormInput control={form.control} name="bannerImageAlt" label="Banner alt text" />
-            <FormTextarea control={form.control} name="bannerSubtitle" label="Banner subtitle" className="md:col-span-2" />
-            <FormInput control={form.control} name="bannerImage" label="Banner image URL" className="md:col-span-2" />
             <FormInput control={form.control} name="logoImage" label="Logo image URL" />
             <FormInput control={form.control} name="logoImageAlt" label="Logo alt text" />
             <FormInput control={form.control} name="wheelTitle" label="Featured heading" />

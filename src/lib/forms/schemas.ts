@@ -29,6 +29,15 @@ export const productFormSchema = z.object({
   images: z.array(z.string()),
 });
 
+export const bannerFormSchema = z.object({
+  id: z.string(),
+  title: z.string().min(1, "Title is required."),
+  subtitle: z.string(),
+  imageAlt: z.string(),
+  sortOrder: z.string().min(1, "Order is required."),
+  image: z.string(),
+});
+
 export const siteSettingsFormSchema = z.object({
   brandName: z.string().min(1, "Brand name is required."),
   brandDescription: z.string(),
@@ -49,10 +58,6 @@ export const siteSettingsFormSchema = z.object({
   aboutButtonHref: z.string(),
   footerPhoneLabel: z.string(),
   footerEmailLabel: z.string(),
-  bannerTitle: z.string(),
-  bannerSubtitle: z.string(),
-  bannerImage: z.string(),
-  bannerImageAlt: z.string(),
   logoImage: z.string(),
   logoImageAlt: z.string(),
   wheelTitle: z.string(),
@@ -88,3 +93,4 @@ export type LoginFormValues = z.infer<typeof loginFormSchema>;
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
+export type BannerFormValues = z.infer<typeof bannerFormSchema>;

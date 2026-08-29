@@ -13,18 +13,42 @@ const INFO_EMAIL = "info@crescentinternational.com";
 const ADDRESS = "Plot 14, Road 3, Tejgaon Industrial Area, Dhaka 1208, Bangladesh";
 
 const home: HomeContent = {
-  bannerTitle: "Factory machinery supplied from Dhaka",
-  bannerSubtitle:
-    "Hydraulic packs, industrial mixers, aggregate plant, food-grade process lines, handling equipment, and packaging machines for plants across Bangladesh.",
-  bannerImage:
-    "https://images.pexels.com/photos/257636/pexels-photo-257636.jpeg?auto=compress&cs=tinysrgb&w=2000",
-  bannerImageAlt: "Industrial process piping and plant equipment",
   logoImage: "",
   logoImageAlt: "Crescent International",
   wheelTitle: "Stock we are quoting this week",
   wheelCtaLabel: "Open full catalogue",
   wheelCtaHref: "/all-products",
   wheelProductsPerCategory: 2,
+};
+
+const seedBanners = {
+  items: [
+    {
+      id: "banner-plant",
+      title: "Factory machinery supplied from Dhaka",
+      subtitle:
+        "Hydraulic packs, industrial mixers, aggregate plant, food-grade process lines, handling equipment, and packaging machines for plants across Bangladesh.",
+      image: "https://images.pexels.com/photos/257636/pexels-photo-257636.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      imageAlt: "Industrial plant floor",
+      sortOrder: 1,
+    },
+    {
+      id: "banner-line",
+      title: "Process lines and stainless plant",
+      subtitle: "Kettles, washers, and fillers for wet rooms, quoted from Tejgaon stock or indent.",
+      image: "https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      imageAlt: "Stainless process tanks",
+      sortOrder: 2,
+    },
+    {
+      id: "banner-works",
+      title: "Handling and packaging from the yard",
+      subtitle: "Forklifts, stackers, wrappers, and baggers for warehouses in Dhaka and Chattogram.",
+      image: "https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      imageAlt: "Factory machinery",
+      sortOrder: 3,
+    },
+  ],
 };
 
 const contact: ContactContent = {
@@ -455,6 +479,7 @@ export const seedProducts: ProductInsert[] = [
 
 export const seedSettings: SettingInsert[] = [
   { id: "home", data: home, body: "" },
+  { id: "banners", data: seedBanners, body: "" },
   { id: "contact", data: contact, body: "" },
   { id: "footer", data: footer, body: "" },
   { id: "about", data: { title: aboutTitle }, body: aboutBody },
