@@ -63,7 +63,11 @@ export default function HomeBanners({
                     className="h-auto w-48 md:w-72"
                   />
                 ) : null}
-                <h1 className="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{banner.title}</h1>
+                {slide === 0 ? (
+                  <h1 className="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{banner.title}</h1>
+                ) : (
+                  <p className="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{banner.title}</p>
+                )}
                 {banner.subtitle ? <p className="max-w-xl text-sm md:text-base">{banner.subtitle}</p> : null}
               </div>
             </AspectRatio>

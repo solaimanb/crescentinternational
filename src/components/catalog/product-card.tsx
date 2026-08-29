@@ -23,7 +23,9 @@ export default function ProductCard({ product }: { product: Product }) {
           ) : null}
         </AspectRatio>
         <CardContent className="py-3">
-          <CardTitle className="text-sm">{product.name}</CardTitle>
+          <CardTitle className="text-sm">
+            <h3 className="text-sm font-heading font-medium leading-snug">{product.name}</h3>
+          </CardTitle>
           <p className="mt-1 text-sm text-primary">{product.priceRange}</p>
         </CardContent>
       </Card>

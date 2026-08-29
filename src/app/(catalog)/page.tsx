@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import type { Route } from "next";
 import HomeBanners from "@/components/catalog/home-banners";
 import ProductCard from "@/components/catalog/product-card";
@@ -9,11 +10,25 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/componen
 import { getAllProducts } from "@/lib/catalog/products";
 import { getCategoryGroups, getWheelProducts } from "@/lib/catalog/groups";
 import { getCategoryContent, getHomeBanners, getHomeContent } from "@/lib/content/site";
+import { brandMetadata, openGraphImage } from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [{ description }, banners] = await Promise.all([brandMetadata(), getHomeBanners()]);
+  const banner = banners[0];
+
+  return {
+    title: banner?.title || undefined,
+    description: banner?.subtitle || description,
+    alternates: { canonical: "/" },
+    openGraph: banner?.image ? { images: openGraphImage(banner.image, banner.imageAlt) } : undefined,
+  };
+}
 
 export default async function HomePage() {
   const products = await getAllProducts();
   const homeContent = await getHomeContent();
   const banners = await getHomeBanners();
+  const { brand } = await brandMetadata();
   const categoryContent = await getCategoryContent();
   const categoryDefinitions = categoryContent.map((category) => ({
     slug: category.slug,
@@ -27,6 +42,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
+      {banners.length === 0 && brand ? <h1 className="sr-only">{brand}</h1> : null}
       {banners.length > 0 ? (
         <HomeBanners
           banners={banners}
@@ -38,7 +54,9 @@ export default async function HomePage() {
       {homeContent ? (
         <Card className="mt-10">
           <CardHeader className="border-b">
-            <CardTitle>{homeContent.wheelTitle}</CardTitle>
+            <CardTitle>
+              <h2 className="font-heading text-base font-medium leading-snug">{homeContent.wheelTitle}</h2>
+            </CardTitle>
             <CardAction>
               <Button nativeButton={false} variant="link" render={<CmsLink href={homeContent.wheelCtaHref} />}>
                 {homeContent.wheelCtaLabel}
@@ -62,7 +80,9 @@ export default async function HomePage() {
             <section key={group.slug} id={`category-${group.slug}`} className="scroll-mt-32">
               <Card className="rounded-xs">
                 <CardHeader className="border-b">
-                  <CardTitle>{group.name}</CardTitle>
+                  <CardTitle>
+                    <h2 className="font-heading text-base font-medium leading-snug">{group.name}</h2>
+                  </CardTitle>
                   <CardAction>
                     <Button
                       nativeButton={false}

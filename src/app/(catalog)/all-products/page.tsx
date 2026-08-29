@@ -2,15 +2,40 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/catalog/product-card";
 import { PaginationNav } from "@/components/pagination-nav";
+import { JsonLd } from "@/components/seo-json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getCategoryContent } from "@/lib/content/site";
 import { paginate } from "@/lib/paginate";
+import { absoluteUrl, brandMetadata, catalogHref } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "All Products | Crescent International",
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps<"/all-products">): Promise<Metadata> {
+  const params = await searchParams;
+  const selectedCategory = typeof params.category === "string" ? params.category : "";
+  const [products, categories, { description }] = await Promise.all([
+    getAllProducts(),
+    getCategoryContent(),
+    brandMetadata(),
+  ]);
+  const category = categories.find((item) => item.slug === selectedCategory);
+  const unknownCategory = Boolean(selectedCategory) && !category;
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.categorySlug === selectedCategory)
+    : products;
+  const { page } = paginate(filteredProducts, params.page, 12);
+
+  return {
+    title: category?.name ?? "Catalogue",
+    description: category?.description || description,
+    alternates: {
+      canonical: unknownCategory ? "/all-products" : catalogHref(selectedCategory, page),
+    },
+    robots: unknownCategory ? { index: false, follow: true } : undefined,
+  };
+}
 
 export default async function AllProductsPage({
   searchParams,
@@ -34,6 +59,18 @@ export default async function AllProductsPage({
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: selectedCategoryName,
+          url: absoluteUrl(
+            categories.some((item) => item.slug === selectedCategory)
+              ? catalogHref(selectedCategory, page)
+              : catalogHref("", page),
+          ),
+        }}
+      />
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Catalogue</p>

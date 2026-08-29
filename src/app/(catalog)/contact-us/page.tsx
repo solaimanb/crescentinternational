@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/seo-json-ld";
 import { getContactContent } from "@/lib/content/site";
+import { absoluteUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const contactContent = await getContactContent();
+  return {
+    title: contactContent?.title,
+    description: contactContent?.intro,
+    alternates: { canonical: "/contact-us" },
+  };
+}
 
 export default async function ContactPage() {
   const contactContent = await getContactContent();
@@ -14,6 +21,15 @@ export default async function ContactPage() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 md:px-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: contactContent.title,
+          description: contactContent.intro,
+          url: absoluteUrl("/contact-us"),
+        }}
+      />
       <section className="rounded-xs border border-slate-200 bg-white p-6 shadow-sm md:p-8">
         <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{contactContent.title}</h1>
         <p className="mt-3 text-slate-700">{contactContent.intro}</p>

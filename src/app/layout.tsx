@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Crescent International Catalogue",
-  description: "Industrial product catalogue for Crescent International",
+  metadataBase: siteUrl(),
+  title: {
+    default: "Crescent International",
+    template: "%s | Crescent International",
+  },
+  description:
+    "Industrial machinery trader in Tejgaon. We supply, install, and support production equipment for factories in Dhaka, Chattogram, and Gazipur.",
+  openGraph: {
+    type: "website",
+    locale: "en",
+    siteName: "Crescent International",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

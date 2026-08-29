@@ -6,17 +6,18 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JsonLd } from "@/components/seo-json-ld";
 import { getAllProducts, getProductBySlug } from "@/lib/catalog/products";
-import { getContactContent, getFooterContent } from "@/lib/content/site";
+import { getContactContent } from "@/lib/content/site";
 import ProductContactActions from "@/components/contact/product-contact-actions";
+import { absoluteUrl, brandMetadata, openGraphImage } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/products/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  const footer = await getFooterContent();
-  const brand = footer?.brandName ?? "";
+  const { brand } = await brandMetadata();
 
   if (!product) {
     return {
@@ -26,8 +27,19 @@ export async function generateMetadata({
   }
 
   return {
-    title: brand ? `${product.name} | ${brand}` : product.name,
+    title: product.name,
     description: product.shortDescription,
+    keywords: product.seoHashtags,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      type: "website",
+      title: product.name,
+      description: product.shortDescription,
+      images: product.images[0] ? openGraphImage(product.images[0], product.name) : undefined,
+    },
+    twitter: product.images[0]
+      ? { card: "summary_large_image", images: [product.images[0]] }
+      : undefined,
   };
 }
 
@@ -39,14 +51,50 @@ export async function generateStaticParams() {
 export default async function ProductDetailPage({ params }: PageProps<"/products/[slug]">) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  const contactContent = await getContactContent();
+  const [contactContent, { brand }] = await Promise.all([getContactContent(), brandMetadata()]);
 
   if (!product) {
     notFound();
   }
 
+  const productUrl = absoluteUrl(`/products/${product.slug}`);
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 md:px-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description: product.shortDescription,
+          image: product.images,
+          sku: product.slug,
+          category: product.category,
+          brand: { "@type": "Brand", name: brand },
+          offers: {
+            "@type": "Offer",
+            description: product.priceRange,
+            availability: "https://schema.org/InStock",
+            url: productUrl,
+          },
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: brand, item: absoluteUrl("/") },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: product.category,
+              item: absoluteUrl(`/all-products?category=${product.categorySlug}`),
+            },
+            { "@type": "ListItem", position: 3, name: product.name, item: productUrl },
+          ],
+        }}
+      />
       <div className="mb-6">
         <Button nativeButton={false} variant="link" render={<Link href="/" />}>
           Back to Home
@@ -62,7 +110,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
                   <Image
                     suppressHydrationWarning
                     src={imageSrc}
-                    alt={`${product.name} ${index + 1}`}
+                    alt={index === 0 ? product.name : `${product.name} ${index + 1}`}
                     fill
                     sizes="(max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
