@@ -267,5 +267,6 @@ export async function saveSettingAction(
   revalidatePath("/contact-us");
   revalidatePath("/terms-and-conditions");
   revalidatePath("/admin");
-  redirect(`/admin/settings/${id}` as Route);
+  revalidatePath("/admin/settings");
+  redirect("/admin/settings" as Route);
 }

@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         destination: "/admin",
         permanent: true,
       },
+      {
+        source: "/admin/settings/:id",
+        destination: "/admin/settings",
+        permanent: true,
+      },
     ];
   },
 };

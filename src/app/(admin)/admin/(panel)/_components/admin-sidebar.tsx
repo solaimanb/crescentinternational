@@ -3,18 +3,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
-import {
-  Factory,
-  FileText,
-  Home,
-  LayoutDashboard,
-  Layers,
-  LogOut,
-  Mail,
-  Package,
-  PanelBottom,
-  ScrollText,
-} from "lucide-react";
+import { Factory, LayoutDashboard, Layers, LogOut, Package, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,18 +19,11 @@ import {
 } from "@/components/ui/sidebar";
 import { signOutAction } from "../../login/actions";
 
-const catalogue = [
+const nav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/categories", label: "Categories", icon: Layers },
   { href: "/admin/products", label: "Products", icon: Package },
-] as const;
-
-const site = [
-  { href: "/admin/settings/home", label: "Home", icon: Home },
-  { href: "/admin/settings/about", label: "About", icon: FileText },
-  { href: "/admin/settings/contact", label: "Contact", icon: Mail },
-  { href: "/admin/settings/footer", label: "Footer", icon: PanelBottom },
-  { href: "/admin/settings/terms", label: "Terms", icon: ScrollText },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 
 function isActivePath(pathname: string, href: string) {
@@ -58,7 +40,7 @@ function NavGroup({
   pathname,
 }: {
   label: string;
-  items: typeof catalogue | typeof site;
+  items: typeof nav;
   pathname: string;
 }) {
   return (
@@ -100,8 +82,7 @@ export function AdminSidebar({ email }: { email: string }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavGroup label="Catalogue" items={catalogue} pathname={pathname} />
-        <NavGroup label="Site" items={site} pathname={pathname} />
+        <NavGroup label="Catalogue" items={nav} pathname={pathname} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
