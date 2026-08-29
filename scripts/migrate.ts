@@ -1,10 +1,8 @@
-import { setDefaultResultOrder } from "node:dns";
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { migrate } from "drizzle-orm/neon-http/migrator";
 
-setDefaultResultOrder("ipv4first");
 config({ path: ".env.local" });
 
 async function main() {

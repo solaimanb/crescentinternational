@@ -1,11 +1,9 @@
-import { setDefaultResultOrder } from "node:dns";
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { category, product, siteSetting } from "../src/lib/catalog-schema";
 import { seedCategories, seedProducts, seedSettings } from "./catalog-data";
 
-setDefaultResultOrder("ipv4first");
 config({ path: ".env.local" });
 
 async function seed() {
