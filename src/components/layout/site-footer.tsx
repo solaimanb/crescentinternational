@@ -1,8 +1,13 @@
-import { Suspense } from "react";
+import { cacheLife } from "next/cache";
 import CmsLink from "@/components/layout/cms-link";
-import CopyrightYear from "@/components/layout/copyright-year";
 import FindUsMap from "@/components/contact/find-us-map";
 import type { FooterContent } from "@/lib/content/types";
+
+async function copyrightYear() {
+  "use cache";
+  cacheLife("max");
+  return new Date().getFullYear();
+}
 
 function phoneToHref(phone: string): string {
   return `tel:${phone.replace(/\s+/g, "")}`;
@@ -11,7 +16,8 @@ function phoneToHref(phone: string): string {
 const labelClass = "text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400";
 const linkClass = "text-sm text-slate-200 transition hover:text-white";
 
-export default function SiteFooter({ footerContent }: { footerContent: FooterContent }) {
+export default async function SiteFooter({ footerContent }: { footerContent: FooterContent }) {
+  const year = await copyrightYear();
   const links = [
     { label: footerContent.homeButtonLabel, href: footerContent.homeButtonHref },
     { label: footerContent.categoriesButtonLabel, href: footerContent.categoriesButtonHref },
@@ -80,11 +86,7 @@ export default function SiteFooter({ footerContent }: { footerContent: FooterCon
 
         <div className="mt-12 flex flex-col gap-2 border-t border-slate-800 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            ©{" "}
-            <Suspense fallback="2026">
-              <CopyrightYear />
-            </Suspense>{" "}
-            {footerContent.brandName} —{" "}
+            © {year} {footerContent.brandName} —{" "}
             <a
               href="https://mrsolo.vercel.app/"
               target="_blank"
