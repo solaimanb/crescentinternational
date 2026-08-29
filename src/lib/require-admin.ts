@@ -12,12 +12,22 @@ export function isAdminUser(user: { role?: string | null; banned?: boolean | nul
   return user.role === "admin";
 }
 
-export async function requireAdmin() {
+export async function getAdminSession() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session || !isAdminUser(session.user)) {
+    return null;
+  }
+
+  return session;
+}
+
+export async function requireAdmin() {
+  const session = await getAdminSession();
+
+  if (!session) {
     redirect("/admin/login");
   }
 
