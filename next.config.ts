@@ -1,0 +1,25 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  cacheComponents: true,
+  typedRoutes: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.storage.c-5.us-east-2.aws.neon.tech",
+      },
+    ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/admin/index.html",
+        destination: "/admin",
+        permanent: true,
+      },
+    ];
+  },
+};
+
+export default nextConfig;
