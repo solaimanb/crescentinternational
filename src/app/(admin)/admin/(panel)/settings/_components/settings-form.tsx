@@ -4,7 +4,8 @@ import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { FieldError, FieldGroup, FieldLegend, FieldSet } from "@/components/ui/field";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FieldError, FieldGroup } from "@/components/ui/field";
 import { FormInput, FormTextarea } from "../../../_components/rhf-fields";
 import type { ContactContent, FooterContent, HomeContent } from "@/lib/content/types";
 import { siteSettingsFormSchema, type SiteSettingsFormValues } from "@/lib/forms/schemas";
@@ -96,7 +97,7 @@ export function SettingsForm({
 
   return (
     <form
-      className="space-y-8"
+      className="space-y-6"
       noValidate
       onSubmit={form.handleSubmit((values) => {
         startTransition(() => {
@@ -104,87 +105,107 @@ export function SettingsForm({
         });
       })}
     >
-      <FieldSet>
-        <FieldLegend>Company</FieldLegend>
-        <FieldGroup className="gap-4 md:grid md:grid-cols-2">
-          <FormInput control={form.control} name="brandName" label="Brand name" />
-          <FormInput control={form.control} name="address" label="Address" />
-          <FormTextarea control={form.control} name="brandDescription" label="Short description" className="md:col-span-2" />
-          <FormTextarea control={form.control} name="phones" label="Phones (one per line)" />
-          <FormTextarea control={form.control} name="emails" label="Emails (one per line)" />
-          <FormInput control={form.control} name="mapUrl" label="Map URL" />
-          <FormInput control={form.control} name="mapPlaceLabel" label="Map label" />
-          <FormInput control={form.control} name="findUsLabel" label="Find-us heading" />
-          <FormInput control={form.control} name="footerNote" label="Footer note" />
-          <FormInput control={form.control} name="footerPhoneLabel" label="Phone heading" />
-          <FormInput control={form.control} name="footerEmailLabel" label="Email heading" />
-          <FormInput control={form.control} name="homeButtonLabel" label="Home link label" />
-          <FormInput control={form.control} name="homeButtonHref" label="Home link URL" />
-          <FormInput control={form.control} name="categoriesButtonLabel" label="Categories link label" />
-          <FormInput control={form.control} name="categoriesButtonHref" label="Categories link URL" />
-          <FormInput control={form.control} name="contactButtonLabel" label="Contact link label" />
-          <FormInput control={form.control} name="contactButtonHref" label="Contact link URL" />
-          <FormInput control={form.control} name="aboutButtonLabel" label="About link label" />
-          <FormInput control={form.control} name="aboutButtonHref" label="About link URL" />
-        </FieldGroup>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>Company</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup className="gap-4 md:grid md:grid-cols-2">
+            <FormInput control={form.control} name="brandName" label="Brand name" />
+            <FormInput control={form.control} name="address" label="Address" />
+            <FormTextarea control={form.control} name="brandDescription" label="Short description" className="md:col-span-2" />
+            <FormTextarea control={form.control} name="phones" label="Phones (one per line)" />
+            <FormTextarea control={form.control} name="emails" label="Emails (one per line)" />
+            <FormInput control={form.control} name="mapUrl" label="Map URL" />
+            <FormInput control={form.control} name="mapPlaceLabel" label="Map label" />
+            <FormInput control={form.control} name="findUsLabel" label="Find-us heading" />
+            <FormInput control={form.control} name="footerNote" label="Footer note" />
+            <FormInput control={form.control} name="footerPhoneLabel" label="Phone heading" />
+            <FormInput control={form.control} name="footerEmailLabel" label="Email heading" />
+            <FormInput control={form.control} name="homeButtonLabel" label="Home link label" />
+            <FormInput control={form.control} name="homeButtonHref" label="Home link URL" />
+            <FormInput control={form.control} name="categoriesButtonLabel" label="Categories link label" />
+            <FormInput control={form.control} name="categoriesButtonHref" label="Categories link URL" />
+            <FormInput control={form.control} name="contactButtonLabel" label="Contact link label" />
+            <FormInput control={form.control} name="contactButtonHref" label="Contact link URL" />
+            <FormInput control={form.control} name="aboutButtonLabel" label="About link label" />
+            <FormInput control={form.control} name="aboutButtonHref" label="About link URL" />
+          </FieldGroup>
+        </CardContent>
+      </Card>
 
-      <FieldSet>
-        <FieldLegend>Homepage</FieldLegend>
-        <FieldGroup className="gap-4 md:grid md:grid-cols-2">
-          <FormInput control={form.control} name="bannerTitle" label="Banner title" />
-          <FormInput control={form.control} name="bannerImageAlt" label="Banner alt text" />
-          <FormTextarea control={form.control} name="bannerSubtitle" label="Banner subtitle" className="md:col-span-2" />
-          <FormInput control={form.control} name="bannerImage" label="Banner image URL" className="md:col-span-2" />
-          <FormInput control={form.control} name="logoImage" label="Logo image URL" />
-          <FormInput control={form.control} name="logoImageAlt" label="Logo alt text" />
-          <FormInput control={form.control} name="wheelTitle" label="Featured heading" />
-          <FormInput control={form.control} name="wheelProductsPerCategory" label="Products per category" type="number" min={0} />
-          <FormInput control={form.control} name="wheelCtaLabel" label="Featured link label" />
-          <FormInput control={form.control} name="wheelCtaHref" label="Featured link URL" />
-        </FieldGroup>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>Homepage</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup className="gap-4 md:grid md:grid-cols-2">
+            <FormInput control={form.control} name="bannerTitle" label="Banner title" />
+            <FormInput control={form.control} name="bannerImageAlt" label="Banner alt text" />
+            <FormTextarea control={form.control} name="bannerSubtitle" label="Banner subtitle" className="md:col-span-2" />
+            <FormInput control={form.control} name="bannerImage" label="Banner image URL" className="md:col-span-2" />
+            <FormInput control={form.control} name="logoImage" label="Logo image URL" />
+            <FormInput control={form.control} name="logoImageAlt" label="Logo alt text" />
+            <FormInput control={form.control} name="wheelTitle" label="Featured heading" />
+            <FormInput control={form.control} name="wheelProductsPerCategory" label="Products per category" type="number" min={0} />
+            <FormInput control={form.control} name="wheelCtaLabel" label="Featured link label" />
+            <FormInput control={form.control} name="wheelCtaHref" label="Featured link URL" />
+          </FieldGroup>
+        </CardContent>
+      </Card>
 
-      <FieldSet>
-        <FieldLegend>Sales contact</FieldLegend>
-        <FieldGroup className="gap-4 md:grid md:grid-cols-2">
-          <FormInput control={form.control} name="contactTitle" label="Page title" />
-          <FormInput control={form.control} name="purchaseSectionTitle" label="Enquiry heading" />
-          <FormTextarea control={form.control} name="contactIntro" label="Intro" className="md:col-span-2" />
-          <FormInput control={form.control} name="contactPhoneLabel" label="Phone label" />
-          <FormInput control={form.control} name="contactPhoneValue" label="Phone" />
-          <FormInput control={form.control} name="contactEmailLabel" label="Email label" />
-          <FormInput control={form.control} name="contactEmailValue" label="Email" />
-          <FormInput control={form.control} name="whatsappButtonLabel" label="WhatsApp button" />
-          <FormInput control={form.control} name="emailButtonLabel" label="Email button" />
-          <FormInput control={form.control} name="phoneButtonLabel" label="Phone button" />
-          <FormInput control={form.control} name="tempButtonLabel" label="Works button" />
-          <FormInput control={form.control} name="whatsappPopupTitle" label="WhatsApp popup title" />
-          <FormInput control={form.control} name="emailPopupTitle" label="Email popup title" />
-          <FormInput control={form.control} name="phonePopupTitle" label="Phone popup title" />
-          <FormInput control={form.control} name="defaultWhatsappHref" label="Default WhatsApp URL" />
-          <FormInput control={form.control} name="defaultTempHref" label="Works URL" />
-          <FormTextarea control={form.control} name="whatsappOptions" label="WhatsApp options (label | value)" />
-          <FormTextarea control={form.control} name="phoneOptions" label="Phone options (label | value)" />
-          <FormTextarea control={form.control} name="emailOptions" label="Email options (label | value)" className="md:col-span-2" />
-        </FieldGroup>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>Sales contact</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup className="gap-4 md:grid md:grid-cols-2">
+            <FormInput control={form.control} name="contactTitle" label="Page title" />
+            <FormInput control={form.control} name="purchaseSectionTitle" label="Enquiry heading" />
+            <FormTextarea control={form.control} name="contactIntro" label="Intro" className="md:col-span-2" />
+            <FormInput control={form.control} name="contactPhoneLabel" label="Phone label" />
+            <FormInput control={form.control} name="contactPhoneValue" label="Phone" />
+            <FormInput control={form.control} name="contactEmailLabel" label="Email label" />
+            <FormInput control={form.control} name="contactEmailValue" label="Email" />
+            <FormInput control={form.control} name="whatsappButtonLabel" label="WhatsApp button" />
+            <FormInput control={form.control} name="emailButtonLabel" label="Email button" />
+            <FormInput control={form.control} name="phoneButtonLabel" label="Phone button" />
+            <FormInput control={form.control} name="tempButtonLabel" label="Works button" />
+            <FormInput control={form.control} name="whatsappPopupTitle" label="WhatsApp popup title" />
+            <FormInput control={form.control} name="emailPopupTitle" label="Email popup title" />
+            <FormInput control={form.control} name="phonePopupTitle" label="Phone popup title" />
+            <FormInput control={form.control} name="defaultWhatsappHref" label="Default WhatsApp URL" />
+            <FormInput control={form.control} name="defaultTempHref" label="Works URL" />
+            <FormTextarea control={form.control} name="whatsappOptions" label="WhatsApp options (label | value)" />
+            <FormTextarea control={form.control} name="phoneOptions" label="Phone options (label | value)" />
+            <FormTextarea control={form.control} name="emailOptions" label="Email options (label | value)" className="md:col-span-2" />
+          </FieldGroup>
+        </CardContent>
+      </Card>
 
-      <FieldSet>
-        <FieldLegend>About</FieldLegend>
-        <FieldGroup>
-          <FormInput control={form.control} name="aboutTitle" label="Title" />
-          <FormTextarea control={form.control} name="aboutBody" label="Body" className="min-h-40" />
-        </FieldGroup>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>About</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <FormInput control={form.control} name="aboutTitle" label="Title" />
+            <FormTextarea control={form.control} name="aboutBody" label="Body" className="min-h-40" />
+          </FieldGroup>
+        </CardContent>
+      </Card>
 
-      <FieldSet>
-        <FieldLegend>Terms</FieldLegend>
-        <FieldGroup>
-          <FormInput control={form.control} name="termsTitle" label="Title" />
-          <FormTextarea control={form.control} name="termsBody" label="Body" className="min-h-40" />
-        </FieldGroup>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>Terms</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <FormInput control={form.control} name="termsTitle" label="Title" />
+            <FormTextarea control={form.control} name="termsBody" label="Body" className="min-h-40" />
+          </FieldGroup>
+        </CardContent>
+      </Card>
 
       {state?.error ? <FieldError>{state.error}</FieldError> : null}
       <Button type="submit" disabled={form.formState.isSubmitting}>
