@@ -29,7 +29,7 @@ export default function TopNav({
   categories?: CategorySettings[];
 }) {
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-2 md:px-8">
         <Link href="/" className="text-lg font-semibold tracking-tight">
           {brandName}
