@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { motion } from "motion/react";
 import ProductCard from "@/components/catalog/product-card";
 import {
   Carousel,
@@ -10,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { productGridItemVariants } from "@/lib/motion";
 import type { Product } from "@/lib/catalog/types";
 
 export default function ProductWheel({ products = [] }: { products?: Product[] }) {
@@ -28,7 +30,14 @@ export default function ProductWheel({ products = [] }: { products?: Product[] }
       <CarouselContent>
         {products.map((product) => (
           <CarouselItem key={product.slug} className="basis-1/2 md:basis-1/3 lg:basis-1/4">
-            <ProductCard product={product} />
+            <motion.div
+              variants={productGridItemVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <ProductCard product={product} />
+            </motion.div>
           </CarouselItem>
         ))}
       </CarouselContent>

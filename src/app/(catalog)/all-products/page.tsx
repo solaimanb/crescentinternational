@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/catalog/product-card";
+import { ProductGrid, ProductGridItem } from "@/components/catalog/product-grid";
 import { PaginationNav } from "@/components/pagination-nav";
 import { JsonLd } from "@/components/seo-json-ld";
 import { Badge } from "@/components/ui/badge";
@@ -96,11 +97,13 @@ export default async function AllProductsPage({
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+      <ProductGrid className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
         {pagedProducts.map((product) => (
-          <ProductCard key={product.slug} product={product} />
+          <ProductGridItem key={product.slug}>
+            <ProductCard product={product} />
+          </ProductGridItem>
         ))}
-      </div>
+      </ProductGrid>
 
       <PaginationNav
         className="mt-6"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import MotionProvider from "@/components/motion-provider";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -36,7 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </MotionProvider>
       </body>
     </html>
   );

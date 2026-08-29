@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { motion } from "motion/react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   Carousel,
@@ -52,7 +53,12 @@ export default function HomeBanners({
                 />
               ) : null}
               <div className="absolute inset-0 bg-black/45" />
-              <div className="absolute inset-0 z-10 flex flex-col justify-center gap-4 p-6 text-primary-foreground md:p-12">
+              <motion.div
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-4 p-6 text-primary-foreground md:p-12"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              >
                 {logoImage ? (
                   <Image
                     suppressHydrationWarning
@@ -69,7 +75,7 @@ export default function HomeBanners({
                   <p className="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{banner.title}</p>
                 )}
                 {banner.subtitle ? <p className="max-w-xl text-sm md:text-base">{banner.subtitle}</p> : null}
-              </div>
+              </motion.div>
             </AspectRatio>
           </CarouselItem>
         ))}

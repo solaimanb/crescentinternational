@@ -1,9 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { ImageOff } from "lucide-react";
+import { motion } from "motion/react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
+import { productCardVariants, productImageVariants } from "@/lib/motion";
 import type { Product } from "@/lib/catalog/types";
+
+const MotionLink = motion.create(Link);
 
 function splitProductName(name: string) {
   const match = name.match(/^(CI-[A-Z0-9-]+)\s+(.+)$/i);
@@ -18,21 +25,29 @@ export default function ProductCard({ product }: { product: Product }) {
   const { model, title } = splitProductName(product.name);
 
   return (
-    <Link
-      href={`/products/${product.slug}`}
-      className="group block h-full rounded-xs outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    <MotionLink
+      href={`/products/${product.slug}` as Route}
+      className="block h-full rounded-xs outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      initial="rest"
+      animate="rest"
+      whileHover="hover"
+      whileTap="tap"
+      whileFocus="hover"
+      variants={productCardVariants}
     >
-      <Card className="h-full gap-0 py-0 shadow-none ring-foreground/8 transition-[box-shadow] group-hover:shadow-md group-hover:ring-foreground/15">
+      <Card className="h-full gap-0 py-0 shadow-none ring-foreground/8">
         <AspectRatio ratio={1} className="overflow-hidden bg-muted">
           {image ? (
-            <Image
-              suppressHydrationWarning
-              src={image}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-            />
+            <motion.div className="absolute inset-0" variants={productImageVariants}>
+              <Image
+                suppressHydrationWarning
+                src={image}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover"
+              />
+            </motion.div>
           ) : (
             <div className="flex size-full items-center justify-center text-muted-foreground">
               <ImageOff className="size-8 opacity-40" aria-hidden />
@@ -48,6 +63,6 @@ export default function ProductCard({ product }: { product: Product }) {
           <p className="mt-auto pt-1 text-sm font-semibold tabular-nums tracking-tight">{product.priceRange}</p>
         </CardContent>
       </Card>
-    </Link>
+    </MotionLink>
   );
 }

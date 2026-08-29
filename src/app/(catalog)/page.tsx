@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { Route } from "next";
 import HomeBanners from "@/components/catalog/home-banners";
 import ProductCard from "@/components/catalog/product-card";
+import { ProductGrid, ProductGridItem } from "@/components/catalog/product-grid";
 import ProductWheel from "@/components/catalog/product-wheel";
 import CmsLink from "@/components/layout/cms-link";
 import { Button } from "@/components/ui/button";
@@ -81,16 +82,16 @@ export default async function HomePage() {
                   See all
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+              <ProductGrid className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                 {group.products.slice(0, categorySettings.homepageDesktopCount).map((product, index) => (
-                  <div
+                  <ProductGridItem
                     key={product.slug}
                     className={index >= categorySettings.homepageMobileCount ? "hidden md:block" : "block"}
                   >
                     <ProductCard product={product} />
-                  </div>
+                  </ProductGridItem>
                 ))}
-              </div>
+              </ProductGrid>
             </section>
           );
         })}
