@@ -36,7 +36,7 @@ const seedBanners = {
       id: "banner-line",
       title: "Process lines and stainless plant",
       subtitle: "Kettles, washers, and fillers for wet rooms, quoted from Tejgaon stock or indent.",
-      image: "https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      image: "https://images.pexels.com/photos/2760286/pexels-photo-2760286.jpeg?auto=compress&cs=tinysrgb&w=2000",
       imageAlt: "Stainless process tanks",
       sortOrder: 2,
     },
@@ -352,7 +352,7 @@ export const seedProducts: ProductInsert[] = [
     "300 litre SS304 kettle, steam jacket 3 bar, scrape agitator, for sauces and halwa.",
     "Jacketed kettle, 300 litre, SS304 product contact, 3 bar steam jacket, scrape-surface agitator 1.5 kW, and a bottom ball valve. Lid with charging port. Built for wet rooms; IP55 motors. We hydro-test the jacket before dispatch. Steam trap set is extra.",
     ["jacketed-kettle", "ss304"],
-    stock(1552630, 1267697),
+    stock(2760286, 7598915),
   ),
   item(
     "ci-vw-800",
