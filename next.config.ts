@@ -8,24 +8,16 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // `qualities` is required in Next.js 16 to restrict which quality values
-    // the Image Optimization API accepts. Unrestricted access was removed to
-    // prevent abuse of the optimization endpoint.
     qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "*.storage.c-5.us-east-2.aws.neon.tech",
-        // Neon Object Storage URLs are UUID-keyed and never need query strings.
-        // Locking search to "" prevents parameter injection on uploaded media.
         search: "",
       },
       {
         protocol: "https",
         hostname: "images.pexels.com",
-        // Pexels CDN URLs legitimately carry query params such as
-        // ?auto=compress&cs=tinysrgb&w=1200 for on-the-fly resizing.
-        // We must NOT set search: "" here or Next.js will reject those URLs.
       },
     ],
   },

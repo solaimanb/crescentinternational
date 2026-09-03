@@ -11,10 +11,6 @@ const imageExtensions: Record<string, string> = {
   "image/gif": "gif",
 };
 
-// AWS_ENDPOINT_URL_S3 is automatically picked up by the AWS SDK v3 as the
-// service endpoint, but we also pass it explicitly so the client works in
-// every runtime environment (Edge, Node, local dev) without relying on
-// implicit env-var discovery.
 const s3Endpoint = process.env.AWS_ENDPOINT_URL_S3;
 
 export const s3 = new S3Client({

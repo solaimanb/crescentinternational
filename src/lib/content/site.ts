@@ -13,10 +13,6 @@ import {
 import type { ContactContent, FooterContent, HomeBanner, HomeContent } from "@/lib/content/types";
 import { db } from "@/lib/db";
 
-// The idiomatic unstable_cache pattern wraps the function once at module scope
-// so Next.js can deduplicate the cached function reference across renders,
-// rather than re-creating a new closure on every getSetting() call.
-// Each setting ID gets its own stable cache key via the keyParts array.
 function makeCachedSetting(id: string) {
   return unstable_cache(
     async () => {
@@ -31,8 +27,6 @@ function makeCachedSetting(id: string) {
 const getCachedSetting: Record<string, ReturnType<typeof makeCachedSetting>> = {};
 
 function getSetting(id: string) {
-  // Memoize the cached function per id so the same stable reference is reused
-  // across the module lifetime, matching the docs' recommended pattern.
   getCachedSetting[id] ??= makeCachedSetting(id);
   return getCachedSetting[id]();
 }

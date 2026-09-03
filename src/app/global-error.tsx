@@ -1,13 +1,5 @@
 "use client";
 
-// global-error.tsx replaces the entire root layout when an unhandled error
-// bubbles to the top of the React tree. Next.js requires this component to
-// render its own <html> and <body> shells. See:
-// https://nextjs.org/docs/app/api-reference/file-conventions/error#global-errorjs
-//
-// `retry` (stable since Next.js 16.3) re-fetches server data before
-// re-rendering, making recovery more reliable than the old `reset` which only
-// cleared client state. `reset` is kept as a fallback type for older runtimes.
 export default function GlobalError({
   retry,
 }: {

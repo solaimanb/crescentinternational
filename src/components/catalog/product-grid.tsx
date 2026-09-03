@@ -9,8 +9,7 @@ export function ProductGrid({ children, className }: { children: React.ReactNode
       className={className}
       variants={productGridVariants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.12 }}
+      animate="visible"
     >
       {children}
     </motion.div>

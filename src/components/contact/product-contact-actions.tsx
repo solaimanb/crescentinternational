@@ -34,8 +34,6 @@ function toEmailHref(value: string): string {
   return `mailto:${trimmed}`;
 }
 
-// Allowed WhatsApp HTTPS origins. Anything else is treated as a raw phone
-// number and normalised to a wa.me deep-link.
 const WHATSAPP_HOSTS = new Set(["wa.me", "api.whatsapp.com", "www.wa.me"]);
 
 function toWhatsappHref(value: string): string {

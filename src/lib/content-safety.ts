@@ -17,8 +17,6 @@ export function isValidSlug(value: string): boolean {
 export function isSafeHttpUrl(value: string): boolean {
   try {
     const url = new URL(value);
-    // Allow only HTTPS. HTTP is excluded because Next.js Image remotePatterns
-    // only whitelists https:// origins, and mixed-content is blocked by browsers.
     return url.protocol === "https:";
   } catch {
     return false;

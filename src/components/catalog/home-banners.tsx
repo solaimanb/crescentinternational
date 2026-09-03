@@ -47,9 +47,6 @@ export default function HomeBanners({
                   src={banner.image}
                   alt={banner.imageAlt || banner.title}
                   fill
-                  // preload replaces the deprecated `priority` prop (Next.js 16+).
-                  // It injects a <link rel="preload"> in <head> for the first slide,
-                  // reducing LCP without affecting subsequent slides.
                   preload={slide === 0}
                   sizes="100vw"
                   className="object-cover"
