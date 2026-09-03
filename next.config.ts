@@ -16,14 +16,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.storage.c-5.us-east-2.aws.neon.tech",
-        // `search: ""` explicitly blocks query strings on Neon storage URLs,
-        // preventing unintended cache-busting or parameter injection.
+        // Neon Object Storage URLs are UUID-keyed and never need query strings.
+        // Locking search to "" prevents parameter injection on uploaded media.
         search: "",
       },
       {
         protocol: "https",
         hostname: "images.pexels.com",
-        search: "",
+        // Pexels CDN URLs legitimately carry query params such as
+        // ?auto=compress&cs=tinysrgb&w=1200 for on-the-fly resizing.
+        // We must NOT set search: "" here or Next.js will reject those URLs.
       },
     ],
   },
