@@ -36,7 +36,7 @@ export default function ProductCard({ product }: { product: Product }) {
       variants={productCardVariants}
     >
       <Card className="h-full gap-0 overflow-hidden rounded-lg py-0 shadow-none ring-foreground/8">
-        <AspectRatio ratio={1} className="overflow-hidden rounded-t-xs bg-muted">
+        <AspectRatio ratio={1} className="overflow-hidden rounded-t-lg bg-muted">
           {image ? (
             <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
               <Image
@@ -55,9 +55,9 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </AspectRatio>
         <CardContent className="flex flex-1 flex-col gap-1.5 py-3.5">
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">{product.category}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{product.category}</p>
           {model ? (
-            <p className="font-mono text-[11px] font-medium tracking-wide text-muted-foreground">{model}</p>
+            <p className="font-mono text-xs font-medium text-muted-foreground">{model}</p>
           ) : null}
           <h3 className="line-clamp-2 text-base font-bold leading-snug tracking-tight md:text-lg">{title}</h3>
           <p className="mt-auto pt-1 text-sm font-semibold tabular-nums tracking-tight">{product.priceRange}</p>

@@ -151,16 +151,16 @@ export default function ProductContactActions({
     <>
       <h2 className="mb-4 text-xl font-bold md:text-2xl">{contactContent.purchaseSectionTitle}</h2>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Button size="lg" className="h-11 bg-green-600 text-white hover:bg-green-700" onClick={() => setActiveModal("whatsapp")}>
+        <Button size="lg" onClick={() => setActiveModal("whatsapp")}>
           {contactContent.whatsappButtonLabel}
         </Button>
-        <Button size="lg" variant="outline" className="h-11" onClick={() => setActiveModal("email")}>
+        <Button size="lg" variant="outline" onClick={() => setActiveModal("email")}>
           {contactContent.emailButtonLabel}
         </Button>
-        <Button size="lg" className="h-11" onClick={() => setActiveModal("phone")}>
+        <Button size="lg" variant="secondary" onClick={() => setActiveModal("phone")}>
           {contactContent.phoneButtonLabel}
         </Button>
-        <Button size="lg" variant="destructive" className="h-11 bg-destructive text-white hover:bg-destructive/90" onClick={() => setActiveModal("temp")}>
+        <Button size="lg" variant="destructive" onClick={() => setActiveModal("temp")}>
           {contactContent.tempButtonLabel}
         </Button>
       </div>
@@ -173,7 +173,7 @@ export default function ProductContactActions({
           }
         }}
       >
-        <DialogContent className="sm:max-w-md" data-lenis-prevent>
+        <DialogContent data-lenis-prevent>
           <DialogHeader>
             <DialogTitle>{activeConfig?.title}</DialogTitle>
           </DialogHeader>
@@ -183,7 +183,7 @@ export default function ProductContactActions({
                 key={`${item.label}-${item.value}-${index}`}
                 nativeButton={false}
                 variant="outline"
-                className="h-auto w-full flex-col items-start gap-0.5 py-2 whitespace-normal"
+                className="h-auto w-full flex-col items-start py-2"
                 render={
                   <a
                     href={activeConfig.hrefBuilder(item.value)}

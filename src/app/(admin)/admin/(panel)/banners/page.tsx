@@ -23,8 +23,8 @@ export default async function AdminBannersPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Banners</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Banners</h1>
         <Button nativeButton={false} render={<Link href={"/admin/banners/new" as Route} />}>
           New banner
         </Button>

@@ -18,8 +18,8 @@ export default async function AdminProductsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Products</h1>
         <Button nativeButton={false} render={<Link href={"/admin/products/new" as Route} />}>
           New product
         </Button>

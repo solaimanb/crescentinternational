@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/carousel";
 import type { HomeBanner } from "@/lib/content/types";
 
-const BANNER_RATIO = 21 / 8;
-
 export default function HomeBanners({
   banners,
   logoImage,
@@ -40,7 +38,7 @@ export default function HomeBanners({
       <CarouselContent className="-ml-0">
         {banners.map((banner, slide) => (
           <CarouselItem key={banner.id} className="pl-0">
-            <AspectRatio ratio={BANNER_RATIO} className="overflow-hidden rounded-lg bg-muted">
+            <AspectRatio ratio={16 / 9} className="overflow-hidden rounded-lg bg-muted">
               {banner.image ? (
                 <Image
                   suppressHydrationWarning
@@ -52,7 +50,7 @@ export default function HomeBanners({
                   className="object-cover"
                 />
               ) : null}
-              <div className="absolute inset-0 bg-black/45" />
+              <div className="absolute inset-0 bg-black/50" />
               <motion.div
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-4 p-6 text-primary-foreground md:p-12"
                 initial={{ opacity: 0, y: 16 }}

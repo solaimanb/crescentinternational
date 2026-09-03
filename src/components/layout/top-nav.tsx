@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import type { Route } from "next";
+import { Menu } from "lucide-react";
 import type { CategorySettings } from "@/lib/catalog/types";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,12 +14,14 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-
-const navItemClassName = cn(
-  navigationMenuTriggerStyle(),
-  "text-white hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-popup-open:bg-white/10 data-popup-open:hover:bg-white/15 data-open:bg-white/10 data-open:hover:bg-white/15 data-open:focus:bg-white/15",
-);
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const pageLinks: Array<{ label: string; href: Route }> = [
   { label: "Home", href: "/" },
@@ -35,26 +39,26 @@ export default function TopNav({
   categories?: CategorySettings[];
 }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-black bg-black text-white">
+    <header className="dark sticky top-0 z-50 border-b bg-background text-foreground">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-2 md:px-8">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-white">
+        <Link href="/" className="truncate font-semibold tracking-tight">
           {brandName}
         </Link>
 
-        <NavigationMenu align="end" className="max-w-full">
-          <NavigationMenuList className="flex-wrap justify-end">
+        <NavigationMenu align="end" className="hidden md:flex">
+          <NavigationMenuList>
             {pageLinks.map((item) => (
               <NavigationMenuItem key={item.href}>
-                <NavigationMenuLink render={<Link href={item.href} />} className={navItemClassName}>
+                <NavigationMenuLink render={<Link href={item.href} />} className={navigationMenuTriggerStyle()}>
                   {item.label}
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
             {categories.length > 0 ? (
               <NavigationMenuItem>
-                <NavigationMenuTrigger className={navItemClassName}>Categories</NavigationMenuTrigger>
+                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[min(100vw-2rem,32rem)] gap-1 p-1 sm:grid-cols-2">
+                  <ul className="grid w-80 gap-1 p-1 sm:w-96 sm:grid-cols-2">
                     {categories.map((category) => (
                       <li key={category.slug}>
                         <NavigationMenuLink
@@ -77,6 +81,43 @@ export default function TopNav({
             ) : null}
           </NavigationMenuList>
         </NavigationMenu>
+
+        <Sheet>
+          <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
+            <Menu />
+            <span className="sr-only">Open menu</span>
+          </SheetTrigger>
+          <SheetContent side="right" className="dark bg-background text-foreground">
+            <SheetHeader>
+              <SheetTitle>{brandName}</SheetTitle>
+            </SheetHeader>
+            <nav className="grid gap-1 px-4 pb-6">
+              {pageLinks.map((item) => (
+                <SheetClose
+                  key={item.href}
+                  render={<Link href={item.href} />}
+                  className={navigationMenuTriggerStyle()}
+                >
+                  {item.label}
+                </SheetClose>
+              ))}
+              {categories.length > 0 ? (
+                <div className="mt-4 grid gap-1">
+                  <p className="px-2.5 text-xs font-medium text-muted-foreground">Categories</p>
+                  {categories.map((category) => (
+                    <SheetClose
+                      key={category.slug}
+                      render={<Link href={`/all-products?category=${category.slug}` as Route} />}
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {category.name}
+                    </SheetClose>
+                  ))}
+                </div>
+              ) : null}
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
