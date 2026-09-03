@@ -47,7 +47,7 @@ export default function FindUsMap({
     return (
       <FindUsMapLink
         href={mapUrl}
-        className="mt-2 inline-flex rounded-xs border border-cyan-400 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
+        className="mt-2 inline-flex rounded-lg border border-cyan-400 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
       >
         {placeLabel}
       </FindUsMapLink>
@@ -58,7 +58,7 @@ export default function FindUsMap({
     <div className="mt-3 space-y-2">
       <div
         data-lenis-prevent
-        className={cn("h-52 overflow-hidden rounded-xs ring-1 ring-white/10", className)}
+        className={cn("h-52 overflow-hidden rounded-lg ring-1 ring-white/10", className)}
       >
         <Map center={[coords.longitude, coords.latitude]} zoom={14} theme="light" cooperativeGestures>
           <MapControls showZoom showCompass={false} showLocate={false} />

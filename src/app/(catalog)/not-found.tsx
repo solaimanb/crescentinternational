@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -8,12 +10,18 @@ export const metadata: Metadata = {
 
 export default function CatalogNotFound() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center">
-      <h1 className="text-3xl font-bold text-slate-900">Page not found</h1>
-      <p className="mt-3 text-slate-600">The page you requested does not exist.</p>
-      <Link href="/" className="mt-6 inline-block text-sm font-semibold text-cyan-700">
-        Back to Home
-      </Link>
-    </div>
+    <Empty className="mx-auto min-h-[40vh] w-full max-w-3xl px-4 py-16">
+      <EmptyHeader>
+        <EmptyTitle className="text-3xl">
+          <h1>Page not found</h1>
+        </EmptyTitle>
+        <EmptyDescription>The page you requested does not exist.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button nativeButton={false} render={<Link href="/" />}>
+          Back to Home
+        </Button>
+      </EmptyContent>
+    </Empty>
   );
 }

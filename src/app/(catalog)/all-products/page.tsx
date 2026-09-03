@@ -5,6 +5,7 @@ import ProductCard from "@/components/catalog/product-card";
 import { ProductGrid, ProductGridItem } from "@/components/catalog/product-grid";
 import { PaginationNav } from "@/components/pagination-nav";
 import { JsonLd } from "@/components/seo-json-ld";
+import { Button } from "@/components/ui/button";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getWheelProducts } from "@/lib/catalog/groups";
 import { getCategoryContent, getHomeContent } from "@/lib/content/site";
@@ -132,9 +133,9 @@ export default async function AllProductsPage({
                 ? "No products match this view."
                 : `Showing ${start}–${end} of ${filteredProducts.length}`}
             </p>
-            <Link href="/" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+            <Button nativeButton={false} variant="link" className="h-auto p-0" render={<Link href="/" />}>
               Back to Home
-            </Link>
+            </Button>
           </div>
 
           {pagedProducts.length > 0 ? (

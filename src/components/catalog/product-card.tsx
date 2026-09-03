@@ -27,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <MotionLink
       href={`/products/${product.slug}` as Route}
-      className="group block h-full rounded-xs outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group block h-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       initial="rest"
       animate="rest"
       whileHover="hover"
@@ -35,7 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
       whileFocus="hover"
       variants={productCardVariants}
     >
-      <Card className="h-full gap-0 overflow-hidden rounded-xs py-0 shadow-none ring-foreground/8">
+      <Card className="h-full gap-0 overflow-hidden rounded-lg py-0 shadow-none ring-foreground/8">
         <AspectRatio ratio={1} className="overflow-hidden rounded-t-xs bg-muted">
           {image ? (
             <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">

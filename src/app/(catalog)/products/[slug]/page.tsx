@@ -100,7 +100,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
           {product.images.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {product.images.map((imageSrc, index) => (
-                <AspectRatio key={`${product.slug}-${imageSrc}-${index}`} ratio={1} className="overflow-hidden rounded-xs bg-muted">
+                <AspectRatio key={`${product.slug}-${imageSrc}-${index}`} ratio={1} className="overflow-hidden rounded-lg bg-muted">
                   <Image
                     suppressHydrationWarning
                     src={imageSrc}

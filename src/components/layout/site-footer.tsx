@@ -76,7 +76,7 @@ export default async function SiteFooter({ footerContent }: { footerContent: Foo
               mapUrl={footerContent.mapUrl}
               placeLabel={footerContent.mapPlaceLabel}
               address={footerContent.addressValue}
-              className="h-48 overflow-hidden rounded-xs ring-1 ring-white/10 lg:h-56"
+              className="h-48 overflow-hidden rounded-lg ring-1 ring-white/10 lg:h-56"
             />
           </section>
         </div>

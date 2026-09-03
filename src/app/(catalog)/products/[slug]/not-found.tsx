@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 
 export const metadata: Metadata = {
   title: "Product not found",
@@ -8,12 +10,18 @@ export const metadata: Metadata = {
 
 export default function ProductNotFound() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center">
-      <h1 className="text-3xl font-bold text-slate-900">Product not found</h1>
-      <p className="mt-3 text-slate-600">This product is no longer in the catalogue.</p>
-      <Link href="/all-products" className="mt-6 inline-block text-sm font-semibold text-cyan-700">
-        Browse all products
-      </Link>
-    </div>
+    <Empty className="mx-auto min-h-[40vh] w-full max-w-3xl px-4 py-16">
+      <EmptyHeader>
+        <EmptyTitle className="text-3xl">
+          <h1>Product not found</h1>
+        </EmptyTitle>
+        <EmptyDescription>This product is no longer in the catalogue.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button nativeButton={false} render={<Link href="/all-products" />}>
+          Browse all products
+        </Button>
+      </EmptyContent>
+    </Empty>
   );
 }

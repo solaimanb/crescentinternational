@@ -35,12 +35,12 @@ export default function HomeBanners({
     <Carousel
       opts={{ loop: banners.length > 1 }}
       plugins={banners.length > 1 ? [autoplay] : undefined}
-      className="w-full overflow-hidden rounded-xs"
+      className="w-full overflow-hidden rounded-lg"
     >
       <CarouselContent className="-ml-0">
         {banners.map((banner, slide) => (
           <CarouselItem key={banner.id} className="pl-0">
-            <AspectRatio ratio={BANNER_RATIO} className="overflow-hidden rounded-xs bg-muted">
+            <AspectRatio ratio={BANNER_RATIO} className="overflow-hidden rounded-lg bg-muted">
               {banner.image ? (
                 <Image
                   suppressHydrationWarning

@@ -35,7 +35,7 @@ export default async function AdminOverviewPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>
-            <div className="flex size-8 items-center justify-center rounded-xs bg-muted">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
               <Layers className="size-4" />
             </div>
             <CardDescription>Categories</CardDescription>
@@ -49,7 +49,7 @@ export default async function AdminOverviewPage() {
         </Card>
         <Card>
           <CardHeader>
-            <div className="flex size-8 items-center justify-center rounded-xs bg-muted">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
               <Package className="size-4" />
             </div>
             <CardDescription>Products</CardDescription>

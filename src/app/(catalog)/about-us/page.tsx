@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo-json-ld";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAboutContent } from "@/lib/content/site";
 import { absoluteUrl, metaSnippet } from "@/lib/seo";
 
@@ -30,10 +31,16 @@ export default async function AboutUsPage() {
           url: absoluteUrl("/about-us"),
         }}
       />
-      <section className="rounded-xs border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{aboutContent.title}</h1>
-        <p className="mt-4 whitespace-pre-line leading-7 text-slate-700">{aboutContent.body}</p>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold md:text-4xl">
+            <h1>{aboutContent.title}</h1>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="whitespace-pre-line leading-7 text-muted-foreground">{aboutContent.body}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

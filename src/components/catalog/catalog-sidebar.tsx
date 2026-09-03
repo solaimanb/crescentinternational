@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import type { CategorySettings, Product } from "@/lib/catalog/types";
 
 function catalogSearchHref(category: string) {
@@ -31,17 +31,20 @@ export default function CatalogSidebar({
 
   return (
     <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
-      <form action="/all-products" className="relative">
+      <form action="/all-products">
         {selectedCategory ? <input type="hidden" name="category" value={selectedCategory} /> : null}
-        <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-        <Input
-          type="search"
-          name="q"
-          defaultValue={query}
-          placeholder="Search products"
-          className="rounded-xs bg-background pr-2.5 pl-8"
-          aria-label="Search products"
-        />
+        <InputGroup>
+          <InputGroupAddon>
+            <Search aria-hidden />
+          </InputGroupAddon>
+          <InputGroupInput
+            type="search"
+            name="q"
+            defaultValue={query}
+            placeholder="Search products"
+            aria-label="Search products"
+          />
+        </InputGroup>
       </form>
 
       <section>
@@ -84,7 +87,7 @@ export default function CatalogSidebar({
             {featuredProducts.map((product) => (
               <li key={product.slug}>
                 <Link href={`/products/${product.slug}` as Route} className="flex gap-3">
-                  <div className="relative size-14 shrink-0 overflow-hidden rounded-xs bg-muted">
+                  <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {product.images[0] ? (
                       <Image
                         suppressHydrationWarning

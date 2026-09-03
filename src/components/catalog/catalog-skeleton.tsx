@@ -6,7 +6,7 @@ export default function CatalogSkeleton() {
       <Skeleton className="h-8 w-48" />
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
         {Array.from({ length: 6 }).map((_, index) => (
-          <Skeleton key={index} className="h-64 rounded-xs" />
+          <Skeleton key={index} className="h-64 rounded-lg" />
         ))}
       </div>
     </div>
