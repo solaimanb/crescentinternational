@@ -20,7 +20,7 @@ function categoryFormData(values: CategoryFormValues) {
 }
 
 export function CategoryForm({ category }: { category?: CategorySettings }) {
-  const [state, formAction] = useActionState(saveCategoryAction, null as ActionState);
+  const [state, formAction, pending] = useActionState(saveCategoryAction, null as ActionState);
   const [deleteState, deleteAction, deletePending] = useActionState(deleteCategoryAction, null as ActionState);
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -54,8 +54,8 @@ export function CategoryForm({ category }: { category?: CategorySettings }) {
           <FormInput control={form.control} name="homepageMobileCount" label="Homepage mobile count" type="number" min={1} />
         </FieldGroup>
         {state?.error ? <FieldError>{state.error}</FieldError> : null}
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Saving..." : "Save category"}
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving..." : "Save category"}
         </Button>
       </form>
 

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { asc, eq } from "drizzle-orm";
 import { category as categoryTable } from "@/lib/catalog-schema";
 import type { CategorySettings } from "@/lib/catalog/types";
@@ -18,23 +18,27 @@ function rowToCategory(row: typeof categoryTable.$inferSelect): CategorySettings
 }
 
 export async function getAllCategories(): Promise<CategorySettings[]> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
+  return unstable_cache(
+    async () => {
+      const rows = await db
+        .select()
+        .from(categoryTable)
+        .orderBy(asc(categoryTable.sortOrder), asc(categoryTable.name));
 
-  const rows = await db
-    .select()
-    .from(categoryTable)
-    .orderBy(asc(categoryTable.sortOrder), asc(categoryTable.name));
-
-  return rows.map(rowToCategory);
+      return rows.map(rowToCategory);
+    },
+    ["catalog-categories"],
+    { revalidate: 3600, tags: ["catalog"] },
+  )();
 }
 
 export async function getCategoryBySlug(slug: string): Promise<CategorySettings | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
-
-  const [row] = await db.select().from(categoryTable).where(eq(categoryTable.slug, slug)).limit(1);
-  return row ? rowToCategory(row) : null;
+  return unstable_cache(
+    async () => {
+      const [row] = await db.select().from(categoryTable).where(eq(categoryTable.slug, slug)).limit(1);
+      return row ? rowToCategory(row) : null;
+    },
+    ["catalog-category", slug],
+    { revalidate: 3600, tags: ["catalog"] },
+  )();
 }

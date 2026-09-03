@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Route } from "next";
 import { eq } from "drizzle-orm";
 import { getAllCategories } from "@/lib/catalog/categories";
 import { category, product, siteSetting } from "@/lib/catalog-schema";
+import { slugify } from "@/lib/content-safety";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadMediaFile } from "@/lib/storage";
@@ -29,16 +30,8 @@ function field(formData: FormData, name: string) {
   return String(formData.get(name) ?? "");
 }
 
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 function revalidateCatalog(slug?: string) {
-  updateTag("catalog");
+  revalidateTag("catalog", "max");
   revalidatePath("/", "layout");
   revalidatePath("/all-products");
   revalidatePath("/admin");
@@ -51,41 +44,75 @@ function revalidateCatalog(slug?: string) {
   }
 }
 
-async function upsertCategory(values: typeof category.$inferInsert) {
-  const [existing] = await db.select().from(category).where(eq(category.slug, values.slug)).limit(1);
-
-  if (existing) {
-    await db.update(category).set(values).where(eq(category.slug, values.slug));
-    return;
-  }
-
-  await db.insert(category).values(values);
+function upsertCategory(values: typeof category.$inferInsert) {
+  return db
+    .insert(category)
+    .values(values)
+    .onConflictDoUpdate({
+      target: category.slug,
+      set: { ...values, updatedAt: new Date() },
+    });
 }
 
-async function upsertProduct(values: typeof product.$inferInsert) {
-  const [existing] = await db.select().from(product).where(eq(product.slug, values.slug)).limit(1);
-
-  if (existing) {
-    await db.update(product).set(values).where(eq(product.slug, values.slug));
-    return;
-  }
-
-  await db.insert(product).values(values);
+function upsertProduct(values: typeof product.$inferInsert) {
+  return db
+    .insert(product)
+    .values(values)
+    .onConflictDoUpdate({
+      target: product.slug,
+      set: { ...values, updatedAt: new Date() },
+    });
 }
 
 async function uploadCatalogImages(files: File[], prefix: string) {
-  const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+  const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const maxFileBytes = 5 * 1024 * 1024;
+  const maxTotalBytes = 10 * 1024 * 1024;
   const urls: string[] = [];
+
+  if (files.length > 2) {
+    throw new Error("Upload at most two images at a time.");
+  }
+
+  if (files.reduce((total, file) => total + file.size, 0) > maxTotalBytes) {
+    throw new Error("Uploaded images must total 10MB or less.");
+  }
 
   for (const file of files) {
     if (file.size === 0) {
       continue;
     }
     if (!allowed.includes(file.type)) {
-      throw new Error("Use a JPEG, PNG, WebP, GIF, or SVG image.");
+      throw new Error("Use a JPEG, PNG, WebP, or GIF image.");
     }
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > maxFileBytes) {
       throw new Error("Images must be 5MB or smaller.");
+    }
+    const signature = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    const validSignature =
+      (file.type === "image/jpeg" && signature[0] === 0xff && signature[1] === 0xd8 && signature[2] === 0xff) ||
+      (file.type === "image/png" &&
+        signature[0] === 0x89 &&
+        signature[1] === 0x50 &&
+        signature[2] === 0x4e &&
+        signature[3] === 0x47) ||
+      (file.type === "image/gif" &&
+        signature[0] === 0x47 &&
+        signature[1] === 0x49 &&
+        signature[2] === 0x46 &&
+        signature[3] === 0x38) ||
+      (file.type === "image/webp" &&
+        signature[0] === 0x52 &&
+        signature[1] === 0x49 &&
+        signature[2] === 0x46 &&
+        signature[3] === 0x46 &&
+        signature[8] === 0x57 &&
+        signature[9] === 0x45 &&
+        signature[10] === 0x42 &&
+        signature[11] === 0x50);
+
+    if (!validSignature) {
+      throw new Error("The uploaded file does not match its image type.");
     }
     urls.push(await uploadMediaFile(file, prefix));
   }
@@ -132,6 +159,9 @@ export async function saveProductAction(
   }
 
   const slug = existingSlug.trim() || slugify(name);
+  if (!slug) {
+    return { error: "Use a name containing letters or numbers so we can create a URL." };
+  }
 
   let uploaded: string[] = [];
   try {
@@ -217,14 +247,17 @@ export async function saveCategoryAction(
     return { error: "Homepage mobile count must be between 1 and 6." };
   }
 
-  await upsertCategory({
-    slug,
-    name: parsed.data.name,
-    description: parsed.data.description,
-    sortOrder,
-    homepageDesktopCount,
-    homepageMobileCount: Math.min(homepageMobileCount, homepageDesktopCount),
-  });
+  await db.batch([
+    upsertCategory({
+      slug,
+      name: parsed.data.name,
+      description: parsed.data.description,
+      sortOrder,
+      homepageDesktopCount,
+      homepageMobileCount: Math.min(homepageMobileCount, homepageDesktopCount),
+    }),
+    db.update(product).set({ category: parsed.data.name }).where(eq(product.categorySlug, slug)),
+  ]);
 
   revalidateCatalog();
   redirect("/admin/categories" as Route);
@@ -238,6 +271,15 @@ export async function deleteCategoryAction(
   const normalized = field(formData, "slug").trim();
   if (!normalized) {
     return { error: "Missing category slug." };
+  }
+
+  const [assignedProduct] = await db
+    .select({ slug: product.slug })
+    .from(product)
+    .where(eq(product.categorySlug, normalized))
+    .limit(1);
+  if (assignedProduct) {
+    return { error: "Move or delete this category's products before deleting it." };
   }
 
   await db.delete(category).where(eq(category.slug, normalized));
@@ -266,14 +308,14 @@ function optionLines(value: string) {
   });
 }
 
-async function upsertSetting(id: string, data: Record<string, unknown>, body = "") {
-  const [existing] = await db.select().from(siteSetting).where(eq(siteSetting.id, id)).limit(1);
-  if (existing) {
-    await db.update(siteSetting).set({ data, body }).where(eq(siteSetting.id, id));
-    return;
-  }
-
-  await db.insert(siteSetting).values({ id, data, body });
+function upsertSetting(id: string, data: Record<string, unknown>, body = "") {
+  return db
+    .insert(siteSetting)
+    .values({ id, data, body })
+    .onConflictDoUpdate({
+      target: siteSetting.id,
+      set: { data, body, updatedAt: new Date() },
+    });
 }
 
 export async function saveSiteSettingsAction(
@@ -356,13 +398,15 @@ export async function saveSiteSettingsAction(
     return { error: "Settings could not be saved." };
   }
 
-  await upsertSetting("home", home.data);
-  await upsertSetting("contact", contact.data);
-  await upsertSetting("footer", footer.data);
-  await upsertSetting("about", about.data, values.aboutBody);
-  await upsertSetting("terms", terms.data, values.termsBody);
+  await db.batch([
+    upsertSetting("home", home.data),
+    upsertSetting("contact", contact.data),
+    upsertSetting("footer", footer.data),
+    upsertSetting("about", about.data, values.aboutBody),
+    upsertSetting("terms", terms.data, values.termsBody),
+  ]);
 
-  updateTag("catalog");
+  revalidateTag("catalog", "max");
   revalidatePath("/", "layout");
   revalidatePath("/about-us");
   revalidatePath("/contact-us");
@@ -400,8 +444,8 @@ export async function saveBannerAction(
   }
 
   const sortOrder = Number(parsed.data.sortOrder);
-  if (!Number.isFinite(sortOrder) || sortOrder < 1) {
-    return { error: "Order must be a number." };
+  if (!Number.isInteger(sortOrder) || sortOrder < 1) {
+    return { error: "Order must be a positive whole number." };
   }
 
   const file = formData.get("imageFile");

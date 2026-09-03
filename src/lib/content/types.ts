@@ -70,4 +70,5 @@ export type ProductContact = {
   whatsappHref: string;
   phoneValue: string;
   emailValue: string;
+  tempValue: string;
 };

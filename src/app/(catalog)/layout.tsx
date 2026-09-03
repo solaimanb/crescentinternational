@@ -7,6 +7,9 @@ import { JsonLd } from "@/components/seo-json-ld";
 import { getCategoryContent, getFooterContent, getHomeContent } from "@/lib/content/site";
 import { absoluteUrl, brandMetadata } from "@/lib/seo";
 
+// Catalogue data is fetched at request time; data helpers provide the shared tagged cache.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const { brand, description } = await brandMetadata();
 

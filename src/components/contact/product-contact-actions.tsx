@@ -34,18 +34,31 @@ function toEmailHref(value: string): string {
   return `mailto:${trimmed}`;
 }
 
+// Allowed WhatsApp HTTPS origins. Anything else is treated as a raw phone
+// number and normalised to a wa.me deep-link.
+const WHATSAPP_HOSTS = new Set(["wa.me", "api.whatsapp.com", "www.wa.me"]);
+
 function toWhatsappHref(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) {
     return "#";
   }
 
-  if (/^https?:\/\//i.test(trimmed)) {
-    return trimmed;
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol === "https:" && WHATSAPP_HOSTS.has(url.hostname)) {
+      return trimmed;
+    }
+  } catch {
+    // not a URL — fall through to digit extraction below
   }
 
   const digits = trimmed.replace(/\D+/g, "");
   return digits ? `https://wa.me/${digits}` : "#";
+}
+
+function withFallback(options: ContactOption[], fallback: ContactOption): ContactOption[] {
+  return options.some((option) => option.value === fallback.value) ? options : [...options, fallback];
 }
 
 export default function ProductContactActions({
@@ -64,7 +77,7 @@ export default function ProductContactActions({
       });
     }
 
-    return options;
+    return withFallback(options, { label: "WhatsApp", value: contactContent.defaultWhatsappHref });
   }, [contactContent.defaultWhatsappHref, contactContent.whatsappOptions, productContact.whatsappHref]);
 
   const phoneOptions = useMemo(() => {
@@ -77,8 +90,8 @@ export default function ProductContactActions({
       });
     }
 
-    return options;
-  }, [contactContent.phoneOptions, contactContent.phoneValue, productContact.phoneValue]);
+    return withFallback(options, { label: contactContent.phoneLabel, value: contactContent.phoneValue });
+  }, [contactContent.phoneLabel, contactContent.phoneOptions, contactContent.phoneValue, productContact.phoneValue]);
 
   const emailOptions = useMemo(() => {
     const options: ContactOption[] = [...contactContent.emailOptions];
@@ -90,8 +103,18 @@ export default function ProductContactActions({
       });
     }
 
-    return options;
-  }, [contactContent.emailOptions, contactContent.emailValue, productContact.emailValue]);
+    return withFallback(options, { label: contactContent.emailLabel, value: contactContent.emailValue });
+  }, [contactContent.emailLabel, contactContent.emailOptions, contactContent.emailValue, productContact.emailValue]);
+
+  const tempOptions = useMemo(() => {
+    const options: ContactOption[] = [];
+
+    if (productContact.tempValue && productContact.tempValue !== contactContent.defaultTempHref) {
+      options.push({ label: "Product Works", value: productContact.tempValue });
+    }
+
+    return withFallback(options, { label: contactContent.tempButtonLabel, value: contactContent.defaultTempHref });
+  }, [contactContent.defaultTempHref, contactContent.tempButtonLabel, productContact.tempValue]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -120,6 +143,12 @@ export default function ProductContactActions({
     phone: {
       title: contactContent.phonePopupTitle,
       options: phoneOptions,
+      hrefBuilder: toPhoneHref,
+      target: "_self" as const,
+    },
+    temp: {
+      title: contactContent.tempButtonLabel,
+      options: tempOptions,
       hrefBuilder: toPhoneHref,
       target: "_self" as const,
     },
@@ -152,12 +181,13 @@ export default function ProductContactActions({
         >
           {contactContent.phoneButtonLabel}
         </button>
-        <a
-          href="#site-footer-find-us"
+        <button
+          type="button"
+          onClick={() => setActiveModal("temp")}
           className="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
         >
-          Find Us
-        </a>
+          {contactContent.tempButtonLabel}
+        </button>
       </div>
 
       {activeConfig ? (

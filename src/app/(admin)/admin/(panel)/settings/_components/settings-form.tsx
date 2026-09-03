@@ -36,7 +36,7 @@ export function SettingsForm({
   about: { title: string; body: string } | null;
   terms: { title: string; body: string } | null;
 }) {
-  const [state, formAction] = useActionState(saveSiteSettingsAction, null as ActionState);
+  const [state, formAction, pending] = useActionState(saveSiteSettingsAction, null as ActionState);
   const form = useForm<SiteSettingsFormValues>({
     resolver: zodResolver(siteSettingsFormSchema),
     defaultValues: {
@@ -200,8 +200,8 @@ export function SettingsForm({
       </Card>
 
       {state?.error ? <FieldError>{state.error}</FieldError> : null}
-      <Button type="submit" disabled={form.formState.isSubmitting}>
-        {form.formState.isSubmitting ? "Saving..." : "Save settings"}
+      <Button type="submit" disabled={pending}>
+        {pending ? "Saving..." : "Save settings"}
       </Button>
     </form>
   );

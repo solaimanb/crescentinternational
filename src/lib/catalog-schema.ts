@@ -18,7 +18,9 @@ export const product = pgTable("product", {
   slug: text("slug").primaryKey(),
   name: text("name").notNull(),
   category: text("category").notNull(),
-  categorySlug: text("category_slug").notNull(),
+  categorySlug: text("category_slug")
+    .notNull()
+    .references(() => category.slug, { onDelete: "restrict", onUpdate: "cascade" }),
   priceRange: text("price_range").notNull(),
   shortDescription: text("short_description").notNull(),
   images: jsonb("images").$type<string[]>().notNull(),

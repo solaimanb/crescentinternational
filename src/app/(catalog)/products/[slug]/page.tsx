@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JsonLd } from "@/components/seo-json-ld";
-import { getAllProducts, getProductBySlug } from "@/lib/catalog/products";
+import { getProductBySlug } from "@/lib/catalog/products";
 import { getContactContent } from "@/lib/content/site";
 import ProductContactActions from "@/components/contact/product-contact-actions";
 import { absoluteUrl, brandMetadata, openGraphImage } from "@/lib/seo";
@@ -43,11 +43,6 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((item) => ({ slug: item.slug }));
-}
-
 export default async function ProductDetailPage({ params }: PageProps<"/products/[slug]">) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
@@ -74,7 +69,6 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
           offers: {
             "@type": "Offer",
             description: product.priceRange,
-            availability: "https://schema.org/InStock",
             url: productUrl,
           },
         }}
@@ -143,6 +137,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
                 whatsappHref: product.contactWhatsapp,
                 phoneValue: product.contactPhone,
                 emailValue: product.contactEmail,
+                tempValue: product.contactTemp,
               }}
             />
           </CardContent>

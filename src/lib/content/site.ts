@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { eq } from "drizzle-orm";
 import { siteSetting } from "@/lib/catalog-schema";
 import {
@@ -13,15 +13,31 @@ import {
 import type { ContactContent, FooterContent, HomeBanner, HomeContent } from "@/lib/content/types";
 import { db } from "@/lib/db";
 
-async function getSetting(id: string) {
-  const [row] = await db.select().from(siteSetting).where(eq(siteSetting.id, id)).limit(1);
-  return row ?? null;
+// The idiomatic unstable_cache pattern wraps the function once at module scope
+// so Next.js can deduplicate the cached function reference across renders,
+// rather than re-creating a new closure on every getSetting() call.
+// Each setting ID gets its own stable cache key via the keyParts array.
+function makeCachedSetting(id: string) {
+  return unstable_cache(
+    async () => {
+      const [row] = await db.select().from(siteSetting).where(eq(siteSetting.id, id)).limit(1);
+      return row ?? null;
+    },
+    ["catalog-setting", id],
+    { revalidate: 3600, tags: ["catalog"] },
+  );
+}
+
+const getCachedSetting: Record<string, ReturnType<typeof makeCachedSetting>> = {};
+
+function getSetting(id: string) {
+  // Memoize the cached function per id so the same stable reference is reused
+  // across the module lifetime, matching the docs' recommended pattern.
+  getCachedSetting[id] ??= makeCachedSetting(id);
+  return getCachedSetting[id]();
 }
 
 export async function getHomeBanners(): Promise<HomeBanner[]> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("banners");
   if (!row) {
     return [];
@@ -39,9 +55,6 @@ export async function getHomeBannerById(id: string): Promise<HomeBanner | null> 
 }
 
 export async function getHomeContent(): Promise<HomeContent | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("home");
   if (!row) {
     return null;
@@ -51,9 +64,6 @@ export async function getHomeContent(): Promise<HomeContent | null> {
 }
 
 export async function getContactContent(): Promise<ContactContent | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("contact");
   if (!row) {
     return null;
@@ -63,9 +73,6 @@ export async function getContactContent(): Promise<ContactContent | null> {
 }
 
 export async function getTermsContent(): Promise<{ title: string; body: string } | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("terms");
   if (!row) {
     return null;
@@ -77,9 +84,6 @@ export async function getTermsContent(): Promise<{ title: string; body: string }
 export { getAllCategories as getCategoryContent } from "@/lib/catalog/categories";
 
 export async function getAboutContent(): Promise<{ title: string; body: string } | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("about");
   if (!row) {
     return null;
@@ -89,9 +93,6 @@ export async function getAboutContent(): Promise<{ title: string; body: string }
 }
 
 export async function getFooterContent(): Promise<FooterContent | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
   const row = await getSetting("footer");
   if (!row) {
     return null;

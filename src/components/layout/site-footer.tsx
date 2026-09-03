@@ -1,11 +1,8 @@
-import { cacheLife } from "next/cache";
 import CmsLink from "@/components/layout/cms-link";
 import FindUsMap from "@/components/contact/find-us-map";
 import type { FooterContent } from "@/lib/content/types";
 
-async function copyrightYear() {
-  "use cache";
-  cacheLife("max");
+function copyrightYear() {
   return new Date().getFullYear();
 }
 
@@ -17,7 +14,7 @@ const labelClass = "text-[11px] font-semibold uppercase tracking-[0.14em] text-s
 const linkClass = "text-sm text-slate-200 transition hover:text-white";
 
 export default async function SiteFooter({ footerContent }: { footerContent: FooterContent }) {
-  const year = await copyrightYear();
+  const year = copyrightYear();
   const links = [
     { label: footerContent.homeButtonLabel, href: footerContent.homeButtonHref },
     { label: footerContent.categoriesButtonLabel, href: footerContent.categoriesButtonHref },

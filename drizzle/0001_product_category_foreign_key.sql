@@ -1,0 +1,1 @@
+ALTER TABLE "product" ADD CONSTRAINT "product_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE restrict ON UPDATE cascade;

@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { isSafeCmsHref, isSafeHttpUrl } from "@/lib/content-safety";
 
 type CmsLinkProps = {
   href: string;
@@ -9,9 +10,13 @@ type CmsLinkProps = {
 };
 
 export default function CmsLink({ href, className, children }: CmsLinkProps) {
-  if (/^https?:\/\//i.test(href)) {
+  if (!isSafeCmsHref(href)) {
+    return <span className={className}>{children}</span>;
+  }
+
+  if (isSafeHttpUrl(href)) {
     return (
-      <a href={href} className={className}>
+      <a href={href} className={className} rel="noopener noreferrer">
         {children}
       </a>
     );

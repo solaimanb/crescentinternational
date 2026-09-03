@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "motion/react";
 import ProductCard from "@/components/catalog/product-card";
@@ -15,7 +15,7 @@ import { productGridItemVariants } from "@/lib/motion";
 import type { Product } from "@/lib/catalog/types";
 
 export default function ProductWheel({ products = [] }: { products?: Product[] }) {
-  const autoplay = useRef(Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const autoplay = useMemo(() => Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true }), []);
 
   if (products.length === 0) {
     return null;
@@ -24,7 +24,7 @@ export default function ProductWheel({ products = [] }: { products?: Product[] }
   return (
     <Carousel
       opts={{ align: "start", loop: products.length > 1 }}
-      plugins={products.length > 1 ? [autoplay.current] : undefined}
+      plugins={products.length > 1 ? [autoplay] : undefined}
       className="w-full px-12"
     >
       <CarouselContent>

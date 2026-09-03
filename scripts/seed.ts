@@ -7,6 +7,10 @@ import { seedCategories, seedProducts, seedSettings } from "./catalog-data";
 config({ path: ".env.local" });
 
 async function seed() {
+  if (process.env.SEED_CONFIRM !== "replace-catalogue") {
+    throw new Error("Set SEED_CONFIRM=replace-catalogue before replacing catalogue data.");
+  }
+
   const url = process.env.DATABASE_URL;
   if (!url) {
     throw new Error("DATABASE_URL is not set");
@@ -14,13 +18,14 @@ async function seed() {
 
   const db = drizzle(neon(url));
 
-  await db.delete(product);
-  await db.delete(category);
-  await db.delete(siteSetting);
-
-  await db.insert(category).values(seedCategories);
-  await db.insert(product).values(seedProducts);
-  await db.insert(siteSetting).values(seedSettings);
+  await db.batch([
+    db.delete(product),
+    db.delete(category),
+    db.delete(siteSetting),
+    db.insert(category).values(seedCategories),
+    db.insert(product).values(seedProducts),
+    db.insert(siteSetting).values(seedSettings),
+  ]);
 
   console.log(
     `Seeded ${seedCategories.length} categories, ${seedProducts.length} products, ${seedSettings.length} settings.`,

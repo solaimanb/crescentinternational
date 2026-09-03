@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useMemo } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "motion/react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -25,7 +25,7 @@ export default function HomeBanners({
   logoImage: string;
   logoImageAlt: string;
 }) {
-  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const autoplay = useMemo(() => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }), []);
 
   if (banners.length === 0) {
     return null;
@@ -34,7 +34,7 @@ export default function HomeBanners({
   return (
     <Carousel
       opts={{ loop: banners.length > 1 }}
-      plugins={banners.length > 1 ? [autoplay.current] : undefined}
+      plugins={banners.length > 1 ? [autoplay] : undefined}
       className="w-full overflow-hidden rounded-xs"
     >
       <CarouselContent className="-ml-0">
@@ -47,7 +47,10 @@ export default function HomeBanners({
                   src={banner.image}
                   alt={banner.imageAlt || banner.title}
                   fill
-                  priority={slide === 0}
+                  // preload replaces the deprecated `priority` prop (Next.js 16+).
+                  // It injects a <link rel="preload"> in <head> for the first slide,
+                  // reducing LCP without affecting subsequent slides.
+                  preload={slide === 0}
                   sizes="100vw"
                   className="object-cover"
                 />

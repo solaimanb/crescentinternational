@@ -11,7 +11,7 @@ import { FormInput } from "../../_components/rhf-fields";
 import { loginAction } from "../actions";
 
 export function AdminLoginForm() {
-  const [state, formAction] = useActionState(loginAction, null);
+  const [state, formAction, pending] = useActionState(loginAction, null);
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -50,8 +50,8 @@ export function AdminLoginForm() {
               />
             </FieldGroup>
             {state?.error ? <FieldError>{state.error}</FieldError> : null}
-            <Button type="submit" disabled={form.formState.isSubmitting} size="lg" className="w-full">
-              {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+            <Button type="submit" disabled={pending} size="lg" className="w-full">
+              {pending ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </CardContent>

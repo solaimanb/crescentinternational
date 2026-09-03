@@ -13,12 +13,12 @@ Set `DATABASE_URL`, Better Auth, and object-storage keys in `.env.local`. Apply 
 
 ```bash
 pnpm db:migrate
-pnpm db:seed
+SEED_CONFIRM=replace-catalogue pnpm db:seed
 pnpm dlx auth@latest create-admin --email you@crescentinternational.com --name "Admin" --role admin
 pnpm dev
 ```
 
-`pnpm db:seed` replaces category, product, and site-setting rows (not auth users). Edit afterwards in `/admin`.
+`pnpm db:seed` replaces category, product, and site-setting rows (not auth users), so it requires the explicit `SEED_CONFIRM=replace-catalogue` confirmation. Edit afterwards in `/admin`.
 
 ## Stack
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { startTransition, useActionState, useRef } from "react";
+import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
@@ -29,8 +29,7 @@ function bannerFormData(values: BannerFormValues, file: File | undefined) {
 }
 
 export function BannerForm({ banner }: { banner?: HomeBanner }) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [state, formAction] = useActionState(saveBannerAction, null as ActionState);
+  const [state, formAction, pending] = useActionState(saveBannerAction, null as ActionState);
   const [deleteState, deleteAction, deletePending] = useActionState(deleteBannerAction, null as ActionState);
   const form = useForm<BannerFormValues>({
     resolver: zodResolver(bannerFormSchema),
@@ -49,9 +48,11 @@ export function BannerForm({ banner }: { banner?: HomeBanner }) {
       <form
         className="space-y-6"
         noValidate
-        onSubmit={form.handleSubmit((values) => {
+        onSubmit={form.handleSubmit((values, event) => {
+          const uploadInput = event?.currentTarget.elements.namedItem("imageFile");
+          const file = uploadInput instanceof HTMLInputElement ? uploadInput.files?.[0] : undefined;
           startTransition(() => {
-            formAction(bannerFormData(values, fileRef.current?.files?.[0]));
+            formAction(bannerFormData(values, file));
           });
         })}
       >
@@ -69,12 +70,12 @@ export function BannerForm({ banner }: { banner?: HomeBanner }) {
                 <Image src={banner.image} alt={banner.imageAlt || banner.title} fill sizes="640px" className="object-cover" />
               </AspectRatio>
             ) : null}
-            <Input id="imageFile" ref={fileRef} type="file" accept="image/*" />
+            <Input id="imageFile" name="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
           </Field>
         </FieldGroup>
         {state?.error ? <FieldError>{state.error}</FieldError> : null}
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Saving..." : "Save banner"}
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving..." : "Save banner"}
         </Button>
       </form>
 

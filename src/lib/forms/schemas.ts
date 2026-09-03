@@ -1,4 +1,14 @@
 import { z } from "zod";
+import { isAllowedImageUrl, isSafeCmsHref, isSafeHttpUrl, isValidSlug } from "@/lib/content-safety";
+
+const optionalSlugSchema = z
+  .string()
+  .max(96, "Slug must be 96 characters or fewer.")
+  .refine((value) => !value || isValidSlug(value), "Slug may only contain lowercase letters, numbers, and hyphens.");
+
+const cmsHrefSchema = z.string().refine(isSafeCmsHref, "Use an internal path or an HTTP(S) URL.");
+const httpUrlSchema = z.string().refine(isSafeHttpUrl, "Use an HTTP(S) URL.");
+const imageUrlSchema = z.string().refine(isAllowedImageUrl, "Use an approved HTTPS image URL.");
 
 export const loginFormSchema = z.object({
   email: z.email("Enter a valid email."),
@@ -6,7 +16,7 @@ export const loginFormSchema = z.object({
 });
 
 export const categoryFormSchema = z.object({
-  slug: z.string(),
+  slug: optionalSlugSchema,
   name: z.string().min(1, "Name is required."),
   description: z.string(),
   order: z.string().min(1, "Order is required."),
@@ -15,7 +25,7 @@ export const categoryFormSchema = z.object({
 });
 
 export const productFormSchema = z.object({
-  slug: z.string(),
+  slug: optionalSlugSchema,
   name: z.string().min(1, "Name is required."),
   categorySlug: z.string().min(1, "Choose a category."),
   priceRange: z.string().min(1, "Price range is required."),
@@ -26,7 +36,7 @@ export const productFormSchema = z.object({
   contactPhone: z.string(),
   contactTemp: z.string(),
   seoHashtags: z.string(),
-  images: z.array(z.string()),
+  images: z.array(imageUrlSchema),
 });
 
 export const bannerFormSchema = z.object({
@@ -35,7 +45,7 @@ export const bannerFormSchema = z.object({
   subtitle: z.string(),
   imageAlt: z.string(),
   sortOrder: z.string().min(1, "Order is required."),
-  image: z.string(),
+  image: z.union([z.literal(""), imageUrlSchema]),
 });
 
 export const siteSettingsFormSchema = z.object({
@@ -44,25 +54,25 @@ export const siteSettingsFormSchema = z.object({
   address: z.string(),
   phones: z.string(),
   emails: z.string(),
-  mapUrl: z.string(),
+  mapUrl: httpUrlSchema,
   mapPlaceLabel: z.string(),
   findUsLabel: z.string(),
   footerNote: z.string(),
   homeButtonLabel: z.string(),
-  homeButtonHref: z.string(),
+  homeButtonHref: cmsHrefSchema,
   categoriesButtonLabel: z.string(),
-  categoriesButtonHref: z.string(),
+  categoriesButtonHref: cmsHrefSchema,
   contactButtonLabel: z.string(),
-  contactButtonHref: z.string(),
+  contactButtonHref: cmsHrefSchema,
   aboutButtonLabel: z.string(),
-  aboutButtonHref: z.string(),
+  aboutButtonHref: cmsHrefSchema,
   footerPhoneLabel: z.string(),
   footerEmailLabel: z.string(),
-  logoImage: z.string(),
+  logoImage: z.union([z.literal(""), imageUrlSchema]),
   logoImageAlt: z.string(),
   wheelTitle: z.string(),
   wheelCtaLabel: z.string(),
-  wheelCtaHref: z.string(),
+  wheelCtaHref: cmsHrefSchema,
   wheelProductsPerCategory: z.string().min(1, "Featured count is required."),
   contactTitle: z.string(),
   contactIntro: z.string(),
@@ -78,8 +88,8 @@ export const siteSettingsFormSchema = z.object({
   whatsappPopupTitle: z.string(),
   emailPopupTitle: z.string(),
   phonePopupTitle: z.string(),
-  defaultWhatsappHref: z.string(),
-  defaultTempHref: z.string(),
+  defaultWhatsappHref: httpUrlSchema,
+  defaultTempHref: z.string().regex(/^tel:\+?[0-9().\-\s]+$/, "Use a tel: URL."),
   whatsappOptions: z.string(),
   phoneOptions: z.string(),
   emailOptions: z.string(),

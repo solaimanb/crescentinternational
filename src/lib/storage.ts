@@ -4,9 +4,22 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { S3Client } from "@aws-sdk/client-s3";
 
 export const MEDIA_BUCKET = "c1-media";
+const imageExtensions: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+// AWS_ENDPOINT_URL_S3 is automatically picked up by the AWS SDK v3 as the
+// service endpoint, but we also pass it explicitly so the client works in
+// every runtime environment (Edge, Node, local dev) without relying on
+// implicit env-var discovery.
+const s3Endpoint = process.env.AWS_ENDPOINT_URL_S3;
 
 export const s3 = new S3Client({
   forcePathStyle: true,
+  ...(s3Endpoint ? { endpoint: s3Endpoint } : {}),
 });
 
 export function mediaUrl(key: string): string {
@@ -19,7 +32,10 @@ export function mediaUrl(key: string): string {
 }
 
 export async function uploadMediaFile(file: File, prefix: string): Promise<string> {
-  const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
+  const extension = imageExtensions[file.type];
+  if (!extension) {
+    throw new Error("Unsupported image type.");
+  }
   const key = `${prefix}/${crypto.randomUUID()}.${extension}`;
   const body = Buffer.from(await file.arrayBuffer());
 

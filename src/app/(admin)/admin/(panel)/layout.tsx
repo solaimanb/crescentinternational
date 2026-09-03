@@ -1,18 +1,11 @@
-import { Suspense, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { requireAdmin } from "@/lib/require-admin";
 import { AdminSidebar } from "./_components/admin-sidebar";
 
-export default function AdminPanelLayout({ children }: LayoutProps<"/admin">) {
-  return (
-    <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading admin…</div>}>
-      <AdminPanelShell>{children}</AdminPanelShell>
-    </Suspense>
-  );
-}
+export const dynamic = "force-dynamic";
 
-async function AdminPanelShell({ children }: { children: ReactNode }) {
+export default async function AdminPanelLayout({ children }: LayoutProps<"/admin">) {
   const session = await requireAdmin();
 
   return (

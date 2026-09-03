@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState, useRef } from "react";
+import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ConfirmAlertDialog } from "@/components/confirm-alert-dialog";
@@ -39,8 +39,7 @@ export function ProductForm({
   product?: Product;
   categories: CategorySettings[];
 }) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [state, formAction] = useActionState(saveProductAction, null as ActionState);
+  const [state, formAction, pending] = useActionState(saveProductAction, null as ActionState);
   const [deleteState, deleteAction, deletePending] = useActionState(deleteProductAction, null as ActionState);
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -70,9 +69,11 @@ export function ProductForm({
       <form
         className="space-y-6"
         noValidate
-        onSubmit={form.handleSubmit((values) => {
+        onSubmit={form.handleSubmit((values, event) => {
+          const uploadInput = event?.currentTarget.elements.namedItem("newImages");
+          const files = uploadInput instanceof HTMLInputElement ? uploadInput.files : null;
           startTransition(() => {
-            formAction(productFormData(values, fileRef.current?.files ?? null));
+            formAction(productFormData(values, files));
           });
         })}
       >
@@ -118,7 +119,7 @@ export function ProductForm({
           <FormInput control={form.control} name="seoHashtags" label="SEO hashtags" />
           <Field>
             <FieldLabel htmlFor="newImages">Images</FieldLabel>
-            <Input id="newImages" ref={fileRef} type="file" accept="image/*" multiple />
+            <Input id="newImages" name="newImages" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
             <div className="mt-2 space-y-2">
               {images.map((src) => (
                 <div key={src} className="flex items-center justify-between gap-2 rounded-lg border px-2 py-1 text-xs">
@@ -149,8 +150,8 @@ export function ProductForm({
         {categories.length === 0 ? <FieldError>Create a category before adding products.</FieldError> : null}
         {state?.error ? <FieldError>{state.error}</FieldError> : null}
 
-        <Button type="submit" disabled={form.formState.isSubmitting || categories.length === 0}>
-          {form.formState.isSubmitting ? "Saving..." : "Save product"}
+        <Button type="submit" disabled={pending || categories.length === 0}>
+          {pending ? "Saving..." : "Save product"}
         </Button>
       </form>
 

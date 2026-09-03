@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { eq } from "drizzle-orm";
 import type { Product } from "@/lib/catalog/types";
 import { getAllCategories } from "@/lib/catalog/categories";
@@ -41,19 +41,23 @@ function sortProducts(products: Product[], categories: { slug: string; order: nu
 }
 
 export async function getAllProducts(): Promise<Product[]> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
-
-  const [categories, rows] = await Promise.all([getAllCategories(), db.select().from(productTable)]);
-  return sortProducts(rows.map(rowToProduct), categories);
+  return unstable_cache(
+    async () => {
+      const [categories, rows] = await Promise.all([getAllCategories(), db.select().from(productTable)]);
+      return sortProducts(rows.map(rowToProduct), categories);
+    },
+    ["catalog-products"],
+    { revalidate: 3600, tags: ["catalog"] },
+  )();
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife("hours");
-
-  const [row] = await db.select().from(productTable).where(eq(productTable.slug, slug)).limit(1);
-  return row ? rowToProduct(row) : null;
+  return unstable_cache(
+    async () => {
+      const [row] = await db.select().from(productTable).where(eq(productTable.slug, slug)).limit(1);
+      return row ? rowToProduct(row) : null;
+    },
+    ["catalog-product", slug],
+    { revalidate: 3600, tags: ["catalog"] },
+  )();
 }
